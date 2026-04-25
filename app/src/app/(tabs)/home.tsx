@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Link } from "expo-router";
 import { ScrollView, StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
+import { QuestBoard } from "@/components/quests/QuestBoard";
 import { DailyLogCard } from "@/components/streak/DailyLogCard";
 import { StreakCalendar } from "@/components/streak/StreakCalendar";
 import { StreakCounter } from "@/components/streak/StreakCounter";
@@ -7,10 +9,17 @@ import { Button } from "@/components/ui/Button";
 import { colors } from "@/constants/colors";
 import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
+import { useQuestStore } from "@/stores/questStore";
 import { useStreakStore } from "@/stores/streakStore";
 
 export default function HomeScreen() {
   const { logs, stats } = useStreakStore();
+  const { activeQuests, completedQuestIds, completeQuest, profile, refreshDailyQuests } =
+    useQuestStore();
+
+  useEffect(() => {
+    refreshDailyQuests();
+  }, [refreshDailyQuests]);
 
   return (
     <ScrollView
@@ -52,16 +61,15 @@ export default function HomeScreen() {
         </Link>
       </View>
 
-      {/* Daily Tasks */}
+      {/* Daily Quests */}
       <View style={styles.section}>
-        <View style={styles.taskHeader}>
-          <Text style={styles.taskHeaderText}>📋  DAILY TASKS</Text>
-        </View>
-        <View style={styles.taskList}>
-          <TaskItem label="Water Plant" xp={10} done={false} />
-          <TaskItem label="Scan Area" xp={25} done={false} />
-          <TaskItem label="Rotate Pot" xp={5} done={false} />
-        </View>
+        <QuestBoard
+          quests={activeQuests}
+          completedQuestIds={completedQuestIds}
+          level={profile.level}
+          plotClass={profile.plotClass}
+          onComplete={completeQuest}
+        />
       </View>
 
       {/* Recent Activity */}
@@ -82,22 +90,6 @@ export default function HomeScreen() {
         )}
       </View>
     </ScrollView>
-  );
-}
-
-// ── Task Item ───────────────────────────────────────────────────────
-
-function TaskItem({ label, xp, done }: { label: string; xp: number; done: boolean }) {
-  return (
-    <View style={[styles.taskItem, done && styles.taskItemDone]}>
-      <View style={[styles.checkbox, done && styles.checkboxDone]}>
-        {done && <Text style={styles.checkmark}>✓</Text>}
-      </View>
-      <Text style={[styles.taskLabel, done && styles.taskLabelDone]}>{label}</Text>
-      <View style={styles.xpBadge}>
-        <Text style={styles.xpText}>+{xp} XP</Text>
-      </View>
-    </View>
   );
 }
 
@@ -193,97 +185,6 @@ const styles = StyleSheet.create({
   actionsRow: {
     gap: spacing.sm,
   } as ViewStyle,
-
-  // Tasks
-  taskHeader: {
-    backgroundColor: colors.secondary,
-    borderColor: colors.border,
-    borderWidth: 4,
-    borderRadius: radius.md,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-    marginBottom: -4,
-  } as ViewStyle,
-  taskHeaderText: {
-    fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.bold,
-    color: colors.onSecondary,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  } as TextStyle,
-  taskList: {
-    backgroundColor: colors.surfaceContainerLowest,
-    borderColor: colors.border,
-    borderWidth: 4,
-    borderRadius: radius.md,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    padding: spacing.sm,
-    gap: spacing.sm,
-    ...shadows.md,
-  } as ViewStyle,
-  taskItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    padding: spacing.sm,
-    borderColor: colors.border,
-    borderWidth: 4,
-    borderRadius: radius.sm,
-    backgroundColor: colors.surface,
-    ...shadows.sm,
-  } as ViewStyle,
-  taskItemDone: {
-    opacity: 0.6,
-    backgroundColor: colors.surfaceVariant,
-  } as ViewStyle,
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderWidth: 4,
-    borderColor: colors.border,
-    borderRadius: 2,
-    backgroundColor: colors.surfaceContainerLowest,
-    alignItems: "center",
-    justifyContent: "center",
-  } as ViewStyle,
-  checkboxDone: {
-    backgroundColor: colors.primary,
-  } as ViewStyle,
-  checkmark: {
-    color: colors.onPrimary,
-    fontSize: 12,
-    fontWeight: typography.weights.bold,
-  } as TextStyle,
-  taskLabel: {
-    flex: 1,
-    fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.medium,
-    color: colors.onSurface,
-  } as TextStyle,
-  taskLabelDone: {
-    textDecorationLine: "line-through",
-    opacity: 0.6,
-  } as TextStyle,
-  xpBadge: {
-    backgroundColor: colors.primaryFixed,
-    borderColor: colors.border,
-    borderWidth: 2,
-    borderRadius: radius.sm,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    ...shadows.sm,
-  } as ViewStyle,
-  xpText: {
-    fontFamily: `${typography.fonts.secondary}-Bold`,
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.bold,
-    color: colors.primary,
-  } as TextStyle,
 
   // Empty state
   emptyCard: {
