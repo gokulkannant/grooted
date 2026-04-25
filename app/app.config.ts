@@ -1,5 +1,10 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
 
+type GrootedExpoConfig = ExpoConfig & {
+  newArchEnabled?: boolean;
+  notification?: Record<string, unknown>;
+};
+
 // === App Identifiers ===
 const EAS_PROJECT_ID = ""; // TODO: Set after `eas init`
 const BASE_BUNDLE_ID = "app.grooted";
@@ -28,7 +33,7 @@ const getScheme = () => {
   return "grooted-dev";
 };
 
-export default ({ config }: ConfigContext): ExpoConfig => ({
+export default ({ config }: ConfigContext): GrootedExpoConfig => ({
   ...config,
   name: getAppName(),
   slug: "grooted",

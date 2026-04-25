@@ -31,7 +31,7 @@ export function Button({ children, variant = "primary", icon, style, ...props }:
 
   return (
     <Pressable
-      style={({ pressed }) => [
+      style={(state) => [
         styles.base,
         { backgroundColor: v.bg },
         variant !== "ghost" && shadows.lg,
@@ -39,8 +39,8 @@ export function Button({ children, variant = "primary", icon, style, ...props }:
           borderWidth: 4,
           borderColor: colors.border,
         },
-        pressed && variant !== "ghost" && styles.pressed,
-        typeof style === "function" ? style({ pressed }) : style,
+        state.pressed && variant !== "ghost" && styles.pressed,
+        typeof style === "function" ? style(state) : style,
       ]}
       {...props}
     >

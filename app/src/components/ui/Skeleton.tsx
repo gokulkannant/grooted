@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+import { colors } from "@/constants/colors";
 
 type SkeletonProps = {
   height?: number;

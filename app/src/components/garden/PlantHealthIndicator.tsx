@@ -7,16 +7,24 @@ type PlantHealthIndicatorProps = {
 };
 
 const labels: Record<HealthStatus, string> = {
+  at_risk: "At risk",
   dead: "Dormant",
+  diseased: "Diseased",
   healthy: "Healthy",
+  needs_attention: "Needs attention",
   needs_water: "Needs water",
+  unknown: "Unknown",
   wilting: "Wilting",
 };
 
 const tones: Record<HealthStatus, string> = {
+  at_risk: colors.warning,
   dead: colors.danger,
+  diseased: colors.danger,
   healthy: colors.primary,
+  needs_attention: colors.warning,
   needs_water: colors.warning,
+  unknown: colors.secondary,
   wilting: colors.streak,
 };
 

@@ -97,6 +97,67 @@ function extractOutputText(response: OpenAIResponse): string {
   return text;
 }
 
+const clampScore = (score: number) => Math.max(0, Math.min(100, Math.round(score)));
+
+const hasClearFindings = (values: string[]) =>
+  values.some((value) => {
+    const normalized = value.trim().toLowerCase();
+    return (
+      normalized.length > 0 &&
+      !normalized.includes("no clear") &&
+      !normalized.includes("none") &&
+      !normalized.includes("not visible") &&
+      !normalized.includes("no visible")
+    );
+  });
+
+function normalizePlantAnalysis(result: PlantAnalysisResult): PlantAnalysisResult {
+  const score = clampScore(result.healthScore);
+  const hasSymptoms = hasClearFindings(result.visibleSymptoms);
+  const hasCauses = hasClearFindings(result.possibleCauses);
+
+  if (!result.isPlant) {
+    return {
+      ...result,
+      healthScore: 0,
+      healthStatus: "unknown",
+    };
+  }
+
+  if (result.healthStatus === "healthy") {
+    return {
+      ...result,
+      healthScore: Math.max(score, hasSymptoms || hasCauses ? 70 : 82),
+    };
+  }
+
+  if (result.healthStatus === "watch") {
+    return {
+      ...result,
+      healthScore: Math.min(Math.max(score, 55), 79),
+    };
+  }
+
+  if (result.healthStatus === "needs_attention") {
+    return {
+      ...result,
+      healthScore: Math.min(Math.max(score, 30), 69),
+    };
+  }
+
+  if (result.healthStatus === "critical") {
+    return {
+      ...result,
+      healthScore: Math.min(score, 35),
+    };
+  }
+
+  return {
+    ...result,
+    healthScore: score,
+  };
+}
+
 export async function analyzePlantImage(
   input: PlantScanInput,
 ): Promise<PlantAnalysisResult> {
@@ -123,7 +184,7 @@ export async function analyzePlantImage(
     body: JSON.stringify({
       model: OPENAI_MODEL,
       instructions:
-        "You are GROOTED's plant scan assistant. Analyze the image for beginner-friendly plant growth stage and plant health signals. Do not claim certainty beyond the visible image. If the image is unclear or not a plant, say so. Give safe, general plant-care guidance only.",
+        "You are GROOTED's plant scan assistant. Analyze the image for beginner-friendly plant growth stage and plant health signals. Do not claim certainty beyond the visible image. If the image is unclear or not a plant, say so. Give safe, general plant-care guidance only. You may receive Plant.id/Kindwise species or disease signals in the context; treat them as supporting evidence, not automatic truth. If Plant.id suggests a disease but the image does not clearly show supporting symptoms, phrase it as a possible risk or something to check, not a confirmed diagnosis. healthScore must be internally consistent with healthStatus: healthy=80-100, watch=55-79, needs_attention=30-69, critical=0-35, unknown=0-100 depending on image quality.",
       input: [
         {
           role: "user",
@@ -185,7 +246,7 @@ export async function analyzePlantImage(
                 ],
               },
               phaseReasoning: { type: "string" },
-              healthScore: { type: "integer" },
+              healthScore: { type: "integer", minimum: 0, maximum: 100 },
               healthStatus: {
                 type: "string",
                 enum: ["healthy", "watch", "needs_attention", "critical", "unknown"],
@@ -250,5 +311,5 @@ export async function analyzePlantImage(
   }
 
   const data = (await response.json()) as OpenAIResponse;
-  return JSON.parse(extractOutputText(data)) as PlantAnalysisResult;
+  return normalizePlantAnalysis(JSON.parse(extractOutputText(data)) as PlantAnalysisResult);
 }
