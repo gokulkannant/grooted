@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import {
   Pressable,
+  type PressableProps,
   StyleSheet,
   Text,
-  type PressableProps,
   type TextStyle,
   type ViewStyle,
 } from "react-native";
@@ -15,6 +15,7 @@ type ButtonVariant = "primary" | "secondary" | "accent" | "ghost";
 
 type ButtonProps = PressableProps & {
   children: ReactNode;
+  icon?: ReactNode;
   variant?: ButtonVariant;
 };
 
@@ -25,7 +26,13 @@ const variantStyles: Record<ButtonVariant, { bg: string; text: string }> = {
   ghost: { bg: "transparent", text: colors.primary },
 };
 
-export function Button({ children, variant = "primary", style, ...props }: ButtonProps) {
+export function Button({
+  children,
+  icon,
+  variant = "primary",
+  style,
+  ...props
+}: ButtonProps) {
   const v = variantStyles[variant];
 
   return (
@@ -43,6 +50,7 @@ export function Button({ children, variant = "primary", style, ...props }: Butto
       ]}
       {...props}
     >
+      {icon}
       <Text style={[styles.label, { color: v.text }]}>{children}</Text>
     </Pressable>
   );

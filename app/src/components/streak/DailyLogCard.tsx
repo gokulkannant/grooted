@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  type TextStyle,
+  View,
+  type ViewStyle,
+} from "react-native";
+import { SproutIcon } from "@/components/icons/GrootedIcons";
 import { colors } from "@/constants/colors";
 import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
@@ -13,7 +20,7 @@ export function DailyLogCard({ log }: DailyLogCardProps) {
   return (
     <View style={styles.card}>
       <View style={styles.iconBox}>
-        <Text style={styles.icon}>🌱</Text>
+        <SproutIcon size={24} />
       </View>
       <View style={styles.content}>
         <Text style={styles.date}>{formatDate(log.loggedAt)}</Text>
@@ -48,9 +55,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   } as ViewStyle,
-  icon: {
-    fontSize: 20,
-  } as TextStyle,
   content: {
     flex: 1,
     gap: 2,

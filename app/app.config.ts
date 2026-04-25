@@ -46,9 +46,7 @@ export default ({ config }: ConfigContext): GrootedExpoConfig => ({
     appVariant: process.env.APP_VARIANT,
   },
   orientation: "portrait",
-  icon: IS_DEV
-    ? "./assets/icons/dev-adaptive-icon.png"
-    : "./assets/icons/adaptive-icon.png",
+  icon: "./assets/icons/adaptive-icon.png",
   scheme: getScheme(),
   userInterfaceStyle: "automatic",
   newArchEnabled: false,
@@ -90,12 +88,8 @@ export default ({ config }: ConfigContext): GrootedExpoConfig => ({
   android: {
     versionCode: 1,
     adaptiveIcon: {
-      foregroundImage: IS_DEV
-        ? "./assets/icons/dev-adaptive-icon.png"
-        : "./assets/icons/adaptive-icon.png",
-      monochromeImage: IS_DEV
-        ? "./assets/icons/dev-adaptive-icon.png"
-        : "./assets/icons/adaptive-icon.png",
+      foregroundImage: "./assets/icons/adaptive-icon.png",
+      monochromeImage: "./assets/icons/adaptive-icon.png",
       backgroundColor: "#1A3C2A",
     },
     package: getUniqueIdentifier(),

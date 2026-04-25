@@ -1,29 +1,43 @@
-import { useEffect } from "react";
 import { Link } from "expo-router";
+import { type ReactNode, useEffect } from "react";
 import {
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View,
   type TextStyle,
+  View,
   type ViewStyle,
 } from "react-native";
+import {
+  CameraGlyphIcon,
+  GrainIcon,
+  LeafIcon,
+  ScanGlyphIcon,
+  SproutIcon,
+} from "@/components/icons/GrootedIcons";
 import { QuestBoard } from "@/components/quests/QuestBoard";
 import { DailyLogCard } from "@/components/streak/DailyLogCard";
 import { StreakCalendar } from "@/components/streak/StreakCalendar";
-import { StreakCounter } from "@/components/streak/StreakCounter";
 import { Button } from "@/components/ui/Button";
 import { colors } from "@/constants/colors";
 import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
+import { useGardenStore } from "@/stores/gardenStore";
 import { useQuestStore } from "@/stores/questStore";
 import { useStreakStore } from "@/stores/streakStore";
 
 export default function HomeScreen() {
   const { logs, stats } = useStreakStore();
-  const { activeQuests, completedQuestIds, completeQuest, profile, refreshDailyQuests } =
-    useQuestStore();
+  const gardenPlants = useGardenStore((state) => state.plants);
+  const recentPlant = gardenPlants.length > 0 ? gardenPlants[0] : null;
+  const {
+    activeQuests,
+    completedQuestIds,
+    completeQuest,
+    profile,
+    refreshDailyQuests,
+  } = useQuestStore();
 
   useEffect(() => {
     refreshDailyQuests();
@@ -45,13 +59,13 @@ export default function HomeScreen() {
 
       {/* Stat Cards */}
       <StatCard
-        icon="🌱"
+        icon={<SproutIcon size={24} />}
         iconBg={colors.primaryContainer}
         label="CURRENT STREAK"
         value={`${stats.current} Days`}
       />
       <StatCard
-        icon="🌿"
+        icon={<LeafIcon size={24} />}
         iconBg={colors.primaryContainer}
         label="FARM POINTS"
         value="0"
@@ -60,30 +74,42 @@ export default function HomeScreen() {
       {/* Quick Scan Button */}
       <Link href="/scan" asChild>
         <Pressable style={styles.scanButton}>
-          <Text style={styles.scanIcon}>🔍</Text>
+          <ScanGlyphIcon color={colors.onPrimary} size={20} />
           <Text style={styles.scanText}>QUICK SCAN</Text>
         </Pressable>
       </Link>
 
       {/* Featured Plant Card */}
-      <View style={styles.plantCard}>
-        <View style={styles.plantBadge}>
-          <View style={styles.plantBadgeDot} />
-          <Text style={styles.plantBadgeText}>Hydrated</Text>
+      {recentPlant ? (
+        <Link href={`/plant/${recentPlant.id}`} asChild>
+          <Pressable style={({ pressed }) => [styles.plantCard, pressed && { opacity: 0.9 }]}>
+            <View style={styles.plantBadge}>
+              <View style={[styles.plantBadgeDot, recentPlant.health === "needs_water" && { backgroundColor: colors.needsWater }, recentPlant.health === "wilting" && { backgroundColor: colors.wilting }]} />
+              <Text style={styles.plantBadgeText}>
+                {recentPlant.health === "healthy" ? "Healthy" : recentPlant.health === "needs_water" ? "Needs Water" : recentPlant.health.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+              </Text>
+            </View>
+            <View style={styles.plantImageBox}>
+              <LeafIcon size={92} />
+            </View>
+            <Text style={styles.plantName}>{recentPlant.name}</Text>
+            <Text style={styles.plantSpecies}>{recentPlant.species.commonName}</Text>
+          </Pressable>
+        </Link>
+      ) : (
+        <View style={styles.plantCard}>
+          <View style={styles.plantImageBox}>
+            <SproutIcon size={48} color={colors.onSurfaceVariant} />
+          </View>
+          <Text style={styles.plantName}>No plants yet</Text>
+          <Text style={styles.plantSpecies}>Scan or add a plant to get started!</Text>
+          <Link href="/plant/add" asChild>
+            <Pressable style={styles.addPlantBtn}>
+              <Text style={styles.addPlantBtnText}>+ Add Your First Plant</Text>
+            </Pressable>
+          </Link>
         </View>
-        <View style={styles.plantImageBox}>
-          <Text style={styles.plantEmoji}>🌿</Text>
-        </View>
-        <Text style={styles.plantName}>Monstera Deliciosa</Text>
-        <Text style={styles.plantSpecies}>Swiss Cheese Plant</Text>
-        <View style={styles.healthRow}>
-          <Text style={styles.healthLabel}>HEALTH</Text>
-          <Text style={styles.healthValue}>95%</Text>
-        </View>
-        <View style={styles.healthTrack}>
-          <View style={[styles.healthFill, { width: "95%" }]} />
-        </View>
-      </View>
+      )}
 
       {/* Weekly Progress */}
       <View style={styles.section}>
@@ -94,10 +120,17 @@ export default function HomeScreen() {
       {/* Quick Actions */}
       <View style={styles.actionsRow}>
         <Link href="/streak/log" asChild>
-          <Button variant="primary">🌱  Log Daily Care</Button>
+          <Button
+            icon={<SproutIcon color={colors.onPrimary} size={20} />}
+            variant="primary"
+          >
+            Log Daily Care
+          </Button>
         </Link>
         <Link href="/scan" asChild>
-          <Button variant="accent">📷  Quick Scan</Button>
+          <Button icon={<CameraGlyphIcon size={20} />} variant="accent">
+            Quick Scan
+          </Button>
         </Link>
       </View>
 
@@ -139,7 +172,7 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>Recent Activity</Text>
         {logs.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Text style={styles.emptyEmoji}>🌾</Text>
+            <GrainIcon size={44} />
             <Text style={styles.emptyText}>
               Your plant care logs will appear here.
             </Text>
@@ -163,16 +196,14 @@ function StatCard({
   label,
   value,
 }: {
-  icon: string;
+  icon: ReactNode;
   iconBg: string;
   label: string;
   value: string;
 }) {
   return (
     <View style={styles.statCard}>
-      <View style={[styles.statIcon, { backgroundColor: iconBg }]}>
-        <Text style={styles.statIconText}>{icon}</Text>
-      </View>
+      <View style={[styles.statIcon, { backgroundColor: iconBg }]}>{icon}</View>
       <View style={styles.statContent}>
         <Text style={styles.statLabel}>{label}</Text>
         <Text style={styles.statValue}>{value}</Text>
@@ -256,9 +287,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   } as ViewStyle,
-  statIconText: {
-    fontSize: 22,
-  } as TextStyle,
   statContent: {
     flex: 1,
   } as ViewStyle,
@@ -290,9 +318,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     ...shadows.md,
   } as ViewStyle,
-  scanIcon: {
-    fontSize: 18,
-  } as TextStyle,
   scanText: {
     fontFamily: `${typography.fonts.primary}-Bold`,
     fontSize: 15,
@@ -341,9 +366,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     overflow: "hidden",
   } as ViewStyle,
-  plantEmoji: {
-    fontSize: 80,
-  } as TextStyle,
   plantName: {
     fontFamily: `${typography.fonts.primary}-Bold`,
     fontSize: 22,
@@ -389,6 +411,20 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colors.healthy,
   } as ViewStyle,
+  addPlantBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.lg,
+    paddingVertical: 12,
+    paddingHorizontal: spacing.lg,
+    alignItems: "center",
+    marginTop: spacing.sm,
+  } as ViewStyle,
+  addPlantBtnText: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 14,
+    fontWeight: typography.weights.bold,
+    color: colors.onPrimary,
+  } as TextStyle,
 
   // Section
   section: {
@@ -419,9 +455,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     ...shadows.md,
   } as ViewStyle,
-  emptyEmoji: {
-    fontSize: 40,
-  } as TextStyle,
   emptyText: {
     fontFamily: `${typography.fonts.primary}-Medium`,
     fontSize: typography.sizes.md,

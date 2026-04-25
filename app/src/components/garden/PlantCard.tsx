@@ -1,11 +1,19 @@
-import { Link, type Href } from "expo-router";
-import { Pressable, StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
+import { type Href, Link } from "expo-router";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  type TextStyle,
+  View,
+  type ViewStyle,
+} from "react-native";
+import { PlantHealthIndicator } from "@/components/garden/PlantHealthIndicator";
+import { LeafIcon } from "@/components/icons/GrootedIcons";
 import { Card } from "@/components/ui/Card";
 import { colors } from "@/constants/colors";
-import { radius, shadows, spacing } from "@/constants/layout";
+import { radius, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
 import type { Plant } from "@/types/plant";
-import { PlantHealthIndicator } from "@/components/garden/PlantHealthIndicator";
 
 type PlantCardProps = {
   plant: Plant;
@@ -17,7 +25,7 @@ export function PlantCard({ plant }: PlantCardProps) {
       <Pressable style={styles.pressable}>
         <Card style={styles.card}>
           <View style={styles.imagePlaceholder}>
-            <Text style={styles.sprout}>🌿</Text>
+            <LeafIcon size={48} />
           </View>
           <Text style={styles.name}>{plant.name}</Text>
           <Text style={styles.species}>{plant.species.commonName}</Text>
@@ -55,8 +63,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: typography.weights.medium,
     color: colors.onSurfaceVariant,
-  } as TextStyle,
-  sprout: {
-    fontSize: 40,
   } as TextStyle,
 });

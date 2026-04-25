@@ -11,7 +11,7 @@ type ScanPayload = {
 };
 
 export const PlantService = {
-  all: () => get<Plant[]>("/plants"),
-  create: (plant: Pick<Plant, "name" | "species">) => post<Plant>("/plants", plant),
-  scan: (payload: ScanPayload) => post<ScanResult>("/plants/scan", payload),
+  all: () => get<Plant[]>("/api/plants"),
+  create: (plant: Pick<Plant, "name" | "species">) => post<Plant>("/api/plants", plant),
+  scan: (payload: ScanPayload) => post<ScanResult>("/api/plants/scan", payload),
 };

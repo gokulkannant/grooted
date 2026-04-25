@@ -1,5 +1,12 @@
 import { Link } from "expo-router";
-import { StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  type TextStyle,
+  View,
+  type ViewStyle,
+} from "react-native";
+import { LeafIcon, SproutIcon } from "@/components/icons/GrootedIcons";
 import { Button } from "@/components/ui/Button";
 import { colors } from "@/constants/colors";
 import { radius, shadows, spacing } from "@/constants/layout";
@@ -15,7 +22,9 @@ export default function LandingScreen() {
 
       {/* Hero Card */}
       <View style={styles.heroCard}>
-        <Text style={styles.plantEmoji}>🌱</Text>
+        <View style={styles.plantIcon}>
+          <SproutIcon size={92} />
+        </View>
         <Text style={styles.title}>GROOTED</Text>
         <Text style={styles.subtitle}>
           Turn real plant care into a local farming game.
@@ -24,7 +33,9 @@ export default function LandingScreen() {
 
       {/* CTA */}
       <Link href="/login" asChild>
-        <Button variant="accent">🌿  Start Growing</Button>
+        <Button icon={<LeafIcon size={20} />} variant="accent">
+          Start Growing
+        </Button>
       </Link>
     </View>
   );
@@ -65,10 +76,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     ...shadows.lg,
   } as ViewStyle,
-  plantEmoji: {
-    fontSize: 80,
+  plantIcon: {
     marginBottom: spacing.xs,
-  } as TextStyle,
+  } as ViewStyle,
   title: {
     fontFamily: `${typography.fonts.primary}-ExtraBold`,
     fontSize: typography.sizes.xxxl,

@@ -1,4 +1,12 @@
-import { Image, StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
+import {
+  Image,
+  type ImageStyle,
+  StyleSheet,
+  Text,
+  type TextStyle,
+  View,
+  type ViewStyle,
+} from "react-native";
 import { colors } from "@/constants/colors";
 import { shadows } from "@/constants/layout";
 import { typography } from "@/constants/typography";
@@ -23,8 +31,12 @@ export function Avatar({ name, uri, size = 44 }: AvatarProps) {
   }
 
   return (
-    <View style={[styles.fallback, { height: size, width: size, borderRadius }]}>
-      <Text style={[styles.initials, { fontSize: size * 0.35 }]}>{initials}</Text>
+    <View
+      style={[styles.fallback, { height: size, width: size, borderRadius }]}
+    >
+      <Text style={[styles.initials, { fontSize: size * 0.35 }]}>
+        {initials}
+      </Text>
     </View>
   );
 }
@@ -32,7 +44,7 @@ export function Avatar({ name, uri, size = 44 }: AvatarProps) {
 const styles = StyleSheet.create({
   avatar: {
     ...shadows.md,
-  } as ViewStyle,
+  } as ImageStyle,
   fallback: {
     alignItems: "center",
     backgroundColor: colors.primary,

@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  type TextStyle,
+  View,
+  type ViewStyle,
+} from "react-native";
+import { SproutIcon } from "@/components/icons/GrootedIcons";
 import { colors } from "@/constants/colors";
 import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
@@ -11,7 +18,7 @@ export function StreakCounter({ count }: StreakCounterProps) {
   return (
     <View style={styles.container}>
       <View style={styles.iconCircle}>
-        <Text style={styles.emoji}>🌱</Text>
+        <SproutIcon size={24} />
       </View>
       <View style={styles.textBlock}>
         <Text style={styles.label}>CURRENT STREAK</Text>
@@ -39,9 +46,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   } as ViewStyle,
-  emoji: {
-    fontSize: 22,
-  } as TextStyle,
   textBlock: {
     flex: 1,
   } as ViewStyle,

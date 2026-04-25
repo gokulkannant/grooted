@@ -21,6 +21,8 @@ export type Plant = {
   health: HealthStatus;
   plantedAt: string;
   imageUrl?: string;
+  latitude?: number;
+  longitude?: number;
 };
 
 export type ScanResult = {
@@ -44,4 +46,7 @@ export type ScanResult = {
   capturedAt?: string;
   fallbackUsed?: boolean;
   source?: "openai" | "openai_kindwise" | "kindwise";
+  imageUrl?: string;
+  latitude?: number;
+  longitude?: number;
 };

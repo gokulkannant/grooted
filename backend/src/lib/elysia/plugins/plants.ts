@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { getDb } from "@/lib/db";
+import { uploadToR2, generatePhotoKey } from "@/lib/r2";
 import {
   analyzePlantImage,
   type PlantAnalysisResult,
@@ -34,14 +35,58 @@ const isScanBody = (body: unknown): body is PlantScanBody =>
   body !== null &&
   ("imageBase64" in body || "imageUrl" in body);
 
-const storeScanResult = async (scan: Record<string, unknown>) => {
-  if (!process.env["DATABASE_URL"]) return;
+const storeScanResult = async (scan: Record<string, unknown>, imageBase64?: string) => {
+  let imageUrl: string | undefined;
+
+  // Upload image to Cloudflare R2
+  if (imageBase64) {
+    try {
+      const imageBuffer = Buffer.from(imageBase64, "base64");
+      const key = generatePhotoKey("anonymous", "scan");
+      imageUrl = await uploadToR2(key, imageBuffer, "image/jpeg");
+      console.log(`✅ Image uploaded to R2: ${key}`);
+    } catch (error) {
+      console.warn("Failed to upload image to R2:", error);
+    }
+  }
+
+  if (!process.env["DATABASE_URL"]) return { imageUrl };
 
   try {
     const db = await getDb();
-    await db.collection("plant_scans").insertOne(scan);
+
+    // Store the scan result
+    const scanDoc = {
+      ...scan,
+      imageUrl,
+      createdAt: new Date(),
+    };
+    await db.collection("plant_scans").insertOne(scanDoc);
+
+    // Also create/update a plant document if we identified a species
+    const species = scan.species as { commonName?: string; id?: string; scientificName?: string } | undefined;
+    if (species?.commonName && species.commonName !== "Unknown plant") {
+      const plantDoc = {
+        name: species.commonName,
+        species,
+        health: scan.health ?? "unknown",
+        healthScore: scan.healthScore ?? 50,
+        imageUrl,
+        latitude: scan.latitude ?? null,
+        longitude: scan.longitude ?? null,
+        scanSessionId: scan.scanSessionId,
+        plantedAt: scan.capturedAt ?? new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      await db.collection("plants").insertOne(plantDoc);
+      console.log(`✅ Plant saved: ${species.commonName}`);
+    }
+
+    return { imageUrl };
   } catch (error) {
-    console.warn("Failed to store plant scan result", error);
+    console.warn("Failed to store plant scan result:", error);
+    return { imageUrl };
   }
 };
 
@@ -279,7 +324,20 @@ const normalizeResponse = (
 };
 
 export const plantsPlugin = new Elysia({ prefix: "/plants" })
-  .get("/", () => ({ message: "TODO: list user plants" }))
+  .get("/", async () => {
+    try {
+      const db = await getDb();
+      const plants = await db
+        .collection("plants")
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(50)
+        .toArray();
+      return { ok: true, plants };
+    } catch {
+      return { ok: true, plants: [] };
+    }
+  })
   .get("/:id", () => ({ message: "TODO: get plant detail" }))
   .post("/", () => ({ message: "TODO: add plant" }))
   .post("/scan", async ({ body, set }) => {
@@ -328,13 +386,14 @@ export const plantsPlugin = new Elysia({ prefix: "/plants" })
 
         const response = normalizeResponse(body, "kindwise", undefined, kindwiseResult);
 
-        await storeScanResult({
+        const { imageUrl } = await storeScanResult({
           ...response,
+          latitude: body.latitude,
+          longitude: body.longitude,
           errors: {},
-          createdAt: new Date(),
-        });
+        }, body.imageBase64);
 
-        return response;
+        return { ...response, imageUrl, latitude: body.latitude, longitude: body.longitude };
       } catch (error) {
         set.status = 502;
         return {
@@ -411,16 +470,17 @@ export const plantsPlugin = new Elysia({ prefix: "/plants" })
       kindwiseResult,
     );
 
-    await storeScanResult({
+    const { imageUrl } = await storeScanResult({
       ...response,
+      latitude: body.latitude,
+      longitude: body.longitude,
       errors: {
         kindwise: kindwiseError,
         openAi: openAiError,
       },
-      createdAt: new Date(),
-    });
+    }, body.imageBase64);
 
-    return response;
+    return { ...response, imageUrl, latitude: body.latitude, longitude: body.longitude };
   })
   .put("/:id", () => ({ message: "TODO: update plant" }))
   .delete("/:id", () => ({ message: "TODO: delete plant" }));

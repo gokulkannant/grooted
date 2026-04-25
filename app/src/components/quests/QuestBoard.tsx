@@ -1,8 +1,8 @@
 import { Pressable, StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
-import { Badge } from "@/components/ui/Badge";
+import Svg, { Path } from "react-native-svg";
 import { getQuestTitleForLevel } from "@/constants/quests";
 import { colors } from "@/constants/colors";
-import { radius, shadows, spacing } from "@/constants/layout";
+import { radius, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
 import type { ActiveQuest, PlotClass } from "@/types/quest";
 
@@ -20,11 +20,19 @@ const plotClassLabels: Record<PlotClass, string> = {
   macro: "Macro-Lord",
 };
 
-const difficultyTone: Record<ActiveQuest["difficulty"], "green" | "gold" | "brown"> = {
-  easy: "green",
-  medium: "gold",
-  hard: "brown",
+const difficultyColors: Record<ActiveQuest["difficulty"], { bg: string; text: string }> = {
+  easy: { bg: "rgba(188, 240, 174, 0.4)", text: colors.primary },
+  medium: { bg: "rgba(255, 225, 109, 0.3)", text: colors.tertiary },
+  hard: { bg: "rgba(255, 218, 214, 0.4)", text: colors.error },
 };
+
+function CheckIcon({ size = 16, color = "#FFF" }: { size?: number; color?: string }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M5 12L10 17L19 7" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
 
 export function QuestBoard({
   quests,
@@ -33,245 +41,284 @@ export function QuestBoard({
   plotClass,
   onComplete,
 }: QuestBoardProps) {
-  const completedCount = quests.filter((quest) =>
-    completedQuestIds.includes(quest.instanceId),
+  const completedCount = quests.filter((q) =>
+    completedQuestIds.includes(q.instanceId),
   ).length;
+  const progress = quests.length ? (completedCount / quests.length) * 100 : 0;
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerCard}>
+      {/* Header */}
+      <View style={styles.header}>
         <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.kicker}>TODAY'S QUESTS</Text>
+          <View style={styles.headerText}>
+            <Text style={styles.kicker}>Daily Quests</Text>
             <Text style={styles.title}>{getQuestTitleForLevel(level)} Board</Text>
           </View>
           <View style={styles.levelPill}>
-            <Text style={styles.levelText}>LVL {level}</Text>
+            <Text style={styles.levelText}>Lvl {level}</Text>
           </View>
         </View>
         <Text style={styles.subtitle}>
-          Balanced for {plotClassLabels[plotClass]}. Complete small farming actions to
-          build skill, not just volume.
+          Balanced for {plotClassLabels[plotClass]}. Small actions, real growth.
         </Text>
-        <View style={styles.progressBar}>
-          <View
-            style={[
-              styles.progressFill,
-              { width: `${quests.length ? (completedCount / quests.length) * 100 : 0}%` },
-            ]}
-          />
+        <View style={styles.progressRow}>
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressFill, { width: `${progress}%` }]} />
+          </View>
+          <Text style={styles.progressLabel}>
+            {completedCount}/{quests.length}
+          </Text>
         </View>
-        <Text style={styles.progressText}>
-          {completedCount}/{quests.length} quests complete
-        </Text>
       </View>
 
-      <View style={styles.questList}>
-        {quests.map((quest) => {
-          const isDone = completedQuestIds.includes(quest.instanceId);
+      {/* Quest Cards */}
+      {quests.map((quest) => {
+        const isDone = completedQuestIds.includes(quest.instanceId);
+        const diff = difficultyColors[quest.difficulty];
 
-          return (
-            <View key={quest.instanceId} style={[styles.questCard, isDone && styles.questDone]}>
-              <View style={styles.questHeader}>
-                <Badge label={quest.difficulty} tone={difficultyTone[quest.difficulty]} />
-                <Text style={styles.questType}>{quest.type}</Text>
+        return (
+          <View key={quest.instanceId} style={[styles.card, isDone && styles.cardDone]}>
+            {/* Top row: difficulty + type */}
+            <View style={styles.cardTop}>
+              <View style={[styles.diffBadge, { backgroundColor: diff.bg }]}>
+                <Text style={[styles.diffText, { color: diff.text }]}>
+                  {quest.difficulty}
+                </Text>
               </View>
-              <Text style={[styles.questTitle, isDone && styles.doneText]}>
-                {quest.title}
-              </Text>
-              <Text style={styles.questDescription}>{quest.description}</Text>
-              <View style={styles.rewardRow}>
-                <Text style={styles.reward}>+{quest.rewardXp} XP</Text>
-                <Text style={styles.reward}>+{quest.farmPoints} FP</Text>
-                {quest.healthGate ? (
-                  <Text style={styles.healthGate}>{quest.healthGate}+ health</Text>
-                ) : null}
+              <Text style={styles.questType}>{quest.type}</Text>
+            </View>
+
+            {/* Title + description */}
+            <Text style={[styles.questTitle, isDone && styles.strikethrough]}>
+              {quest.title}
+            </Text>
+            <Text style={styles.questDesc}>{quest.description}</Text>
+
+            {/* Rewards + button */}
+            <View style={styles.cardBottom}>
+              <View style={styles.rewards}>
+                <View style={styles.rewardChip}>
+                  <Text style={styles.rewardText}>+{quest.rewardXp} XP</Text>
+                </View>
+                <View style={styles.rewardChip}>
+                  <Text style={styles.rewardText}>+{quest.farmPoints} FP</Text>
+                </View>
               </View>
               <Pressable
                 accessibilityRole="button"
                 disabled={isDone}
-                style={[styles.completeButton, isDone && styles.completeButtonDone]}
+                style={({ pressed }) => [
+                  styles.completeBtn,
+                  isDone && styles.completeBtnDone,
+                  pressed && !isDone && styles.completeBtnPressed,
+                ]}
                 onPress={() => onComplete(quest.instanceId)}
               >
-                <Text style={styles.completeButtonText}>
-                  {isDone ? "Completed" : "Mark complete"}
-                </Text>
+                {isDone ? (
+                  <CheckIcon size={18} color="#FFF" />
+                ) : (
+                  <Text style={styles.completeBtnText}>Complete</Text>
+                )}
               </Pressable>
             </View>
-          );
-        })}
-      </View>
+          </View>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.sm,
+    gap: 12,
   } as ViewStyle,
-  headerCard: {
-    backgroundColor: colors.surfaceContainerLowest,
-    borderColor: colors.border,
-    borderWidth: 4,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    gap: spacing.sm,
-    ...shadows.md,
+
+  // Header
+  header: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 16,
+    gap: 10,
+    shadowColor: "#1a3c2a",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   } as ViewStyle,
   headerTop: {
-    alignItems: "flex-start",
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: spacing.sm,
+    alignItems: "flex-start",
+  } as ViewStyle,
+  headerText: {
+    flex: 1,
+    gap: 2,
   } as ViewStyle,
   kicker: {
-    fontFamily: `${typography.fonts.secondary}-Bold`,
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.bold,
-    color: colors.secondary,
-    letterSpacing: 1,
-  } as TextStyle,
-  title: {
-    fontFamily: `${typography.fonts.primary}-ExtraBold`,
-    fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.extrabold,
-    color: colors.onSurface,
-  } as TextStyle,
-  subtitle: {
     fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: typography.sizes.sm,
+    fontSize: 12,
     fontWeight: typography.weights.medium,
     color: colors.onSurfaceVariant,
-    lineHeight: 20,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  } as TextStyle,
+  title: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 20,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurface,
+    letterSpacing: -0.3,
+  } as TextStyle,
+  subtitle: {
+    fontFamily: `${typography.fonts.primary}-Regular`,
+    fontSize: 13,
+    fontWeight: typography.weights.regular,
+    color: colors.onSurfaceVariant,
+    lineHeight: 18,
   } as TextStyle,
   levelPill: {
-    backgroundColor: colors.tertiaryFixed,
-    borderColor: colors.border,
-    borderWidth: 3,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
-    ...shadows.sm,
+    backgroundColor: "rgba(255, 225, 109, 0.3)",
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   } as ViewStyle,
   levelText: {
-    fontFamily: `${typography.fonts.secondary}-Bold`,
-    fontSize: typography.sizes.xs,
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 12,
     fontWeight: typography.weights.bold,
-    color: colors.onTertiaryContainer,
+    color: colors.tertiary,
   } as TextStyle,
-  progressBar: {
-    height: 14,
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  } as ViewStyle,
+  progressTrack: {
+    flex: 1,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(188, 240, 174, 0.3)",
     overflow: "hidden",
-    backgroundColor: colors.surfaceContainerHigh,
-    borderColor: colors.border,
-    borderWidth: 3,
-    borderRadius: radius.full,
   } as ViewStyle,
   progressFill: {
     height: "100%",
-    backgroundColor: colors.primaryFixed,
-  } as ViewStyle,
-  progressText: {
-    fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.bold,
-    color: colors.onSurface,
-  } as TextStyle,
-  questList: {
-    gap: spacing.sm,
-  } as ViewStyle,
-  questCard: {
-    backgroundColor: colors.surfaceContainerLowest,
-    borderColor: colors.border,
-    borderWidth: 4,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    gap: spacing.sm,
-    ...shadows.md,
-  } as ViewStyle,
-  questDone: {
-    opacity: 0.72,
-    backgroundColor: colors.surfaceVariant,
-  } as ViewStyle,
-  questHeader: {
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: spacing.sm,
-  } as ViewStyle,
-  questType: {
-    fontFamily: `${typography.fonts.secondary}-Bold`,
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.bold,
-    color: colors.onSurfaceVariant,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  } as TextStyle,
-  questTitle: {
-    fontFamily: `${typography.fonts.primary}-ExtraBold`,
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.extrabold,
-    color: colors.onSurface,
-  } as TextStyle,
-  doneText: {
-    textDecorationLine: "line-through",
-  } as TextStyle,
-  questDescription: {
-    fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: typography.sizes.md,
-    fontWeight: typography.weights.medium,
-    color: colors.onSurfaceVariant,
-    lineHeight: 22,
-  } as TextStyle,
-  rewardRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.xs,
-  } as ViewStyle,
-  reward: {
-    backgroundColor: colors.primaryFixed,
-    borderColor: colors.border,
-    borderWidth: 2,
-    borderRadius: radius.sm,
-    color: colors.primary,
-    fontFamily: `${typography.fonts.secondary}-Bold`,
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.bold,
-    overflow: "hidden",
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 6,
-  } as TextStyle,
-  healthGate: {
-    backgroundColor: colors.errorContainer,
-    borderColor: colors.border,
-    borderWidth: 2,
-    borderRadius: radius.sm,
-    color: colors.error,
-    fontFamily: `${typography.fonts.secondary}-Bold`,
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.bold,
-    overflow: "hidden",
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 6,
-  } as TextStyle,
-  completeButton: {
-    alignItems: "center",
-    backgroundColor: colors.onSurface,
-    borderColor: colors.border,
-    borderWidth: 3,
-    borderRadius: radius.sm,
-    justifyContent: "center",
-    minHeight: 42,
-  } as ViewStyle,
-  completeButtonDone: {
+    borderRadius: 3,
     backgroundColor: colors.primary,
   } as ViewStyle,
-  completeButtonText: {
-    color: colors.onPrimary,
+  progressLabel: {
     fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: typography.sizes.sm,
+    fontSize: 13,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurface,
+  } as TextStyle,
+
+  // Quest Card
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 16,
+    gap: 8,
+    shadowColor: "#1a3c2a",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  } as ViewStyle,
+  cardDone: {
+    opacity: 0.6,
+  } as ViewStyle,
+  cardTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  } as ViewStyle,
+  diffBadge: {
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+  } as ViewStyle,
+  diffText: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 11,
     fontWeight: typography.weights.bold,
     textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+  } as TextStyle,
+  questType: {
+    fontFamily: `${typography.fonts.primary}-Medium`,
+    fontSize: 12,
+    fontWeight: typography.weights.medium,
+    color: colors.onSurfaceVariant,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  } as TextStyle,
+  questTitle: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 17,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurface,
+    letterSpacing: -0.2,
+  } as TextStyle,
+  strikethrough: {
+    textDecorationLine: "line-through",
+    color: colors.onSurfaceVariant,
+  } as TextStyle,
+  questDesc: {
+    fontFamily: `${typography.fonts.primary}-Regular`,
+    fontSize: 14,
+    fontWeight: typography.weights.regular,
+    color: colors.onSurfaceVariant,
+    lineHeight: 20,
+  } as TextStyle,
+
+  // Bottom row
+  cardBottom: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 4,
+  } as ViewStyle,
+  rewards: {
+    flexDirection: "row",
+    gap: 6,
+  } as ViewStyle,
+  rewardChip: {
+    backgroundColor: "rgba(188, 240, 174, 0.3)",
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  } as ViewStyle,
+  rewardText: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 11,
+    fontWeight: typography.weights.bold,
+    color: colors.primary,
+  } as TextStyle,
+  completeBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+  } as ViewStyle,
+  completeBtnDone: {
+    backgroundColor: colors.primary,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  } as ViewStyle,
+  completeBtnPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.97 }],
+  } as ViewStyle,
+  completeBtnText: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 13,
+    fontWeight: typography.weights.bold,
+    color: "#FFFFFF",
   } as TextStyle,
 });
