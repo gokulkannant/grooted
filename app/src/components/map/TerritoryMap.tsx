@@ -1,22 +1,31 @@
+import * as Location from "expo-location";
 import { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Animated,
   Easing,
-  Image,
   Platform,
+  Pressable,
   StyleSheet,
   Text,
-  View,
   type TextStyle,
+  View,
   type ViewStyle,
 } from "react-native";
 import MapView, { Circle, Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import Svg, { Path, Circle as SvgCircle } from "react-native-svg";
-import * as Location from "expo-location";
+import {
+  DropletIcon,
+  GrainIcon,
+  LeafIcon,
+  ScanGlyphIcon,
+  SproutIcon,
+  StarIcon,
+} from "@/components/icons/GrootedIcons";
 import { colors } from "@/constants/colors";
 import { typography } from "@/constants/typography";
+import { useQuestStore } from "@/stores/questStore";
 import type { FarmZone, SeedDrop } from "@/types/map";
+import type { QuestType } from "@/types/quest";
 
 /**
  * Custom map style — muted sage/green tones matching Grooted's earthy palette.
@@ -24,31 +33,97 @@ import type { FarmZone, SeedDrop } from "@/types/map";
 const MAP_STYLE = [
   { elementType: "geometry", stylers: [{ color: "#e8ede4" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#3d5a3a" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#f0f4ec" }, { weight: 2.5 }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#f5f8f2" }] },
-  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#d4ddd0" }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#eaf0e4" }] },
-  { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#b8c8b0" }] },
-  { featureType: "road.arterial", elementType: "labels", stylers: [{ visibility: "off" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#c4d8cc" }] },
-  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#5a7a5a" }] },
-  { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#c8e0b8" }] },
-  { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#2d5a27" }] },
-  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#dde8d6" }] },
-  { featureType: "landscape.man_made", elementType: "geometry", stylers: [{ color: "#e8ede4" }] },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [{ color: "#f0f4ec" }, { weight: 2.5 }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#f5f8f2" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#d4ddd0" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#eaf0e4" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#b8c8b0" }],
+  },
+  {
+    featureType: "road.arterial",
+    elementType: "labels",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#c4d8cc" }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#5a7a5a" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: "#c8e0b8" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#2d5a27" }],
+  },
+  {
+    featureType: "landscape.natural",
+    elementType: "geometry",
+    stylers: [{ color: "#dde8d6" }],
+  },
+  {
+    featureType: "landscape.man_made",
+    elementType: "geometry",
+    stylers: [{ color: "#e8ede4" }],
+  },
   { featureType: "poi.business", stylers: [{ visibility: "off" }] },
   { featureType: "poi.medical", stylers: [{ visibility: "off" }] },
   { featureType: "poi.school", stylers: [{ visibility: "off" }] },
   { featureType: "poi.sports_complex", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "simplified" }] },
-  { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#b8c8b0" }, { weight: 0.8 }] },
-  { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
-  { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
+  {
+    featureType: "administrative",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#b8c8b0" }, { weight: 0.8 }],
+  },
+  {
+    featureType: "administrative.land_parcel",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "administrative.neighborhood",
+    stylers: [{ visibility: "off" }],
+  },
 ];
+
+type PlantMarker = {
+  id: string;
+  name: string;
+  species: string;
+  health: string;
+  coordinate: { latitude: number; longitude: number };
+};
 
 type TerritoryMapProps = {
   zones: FarmZone[];
   seedDrops: SeedDrop[];
+  plantMarkers?: PlantMarker[];
 };
 
 const DEFAULT_REGION = {
@@ -58,11 +133,31 @@ const DEFAULT_REGION = {
   longitudeDelta: 0.015,
 };
 
-export function TerritoryMap({ zones, seedDrops }: TerritoryMapProps) {
+const QUEST_ICON: Record<QuestType, React.FC<{ size?: number; color?: string }>> = {
+  care: DropletIcon,
+  scan: ScanGlyphIcon,
+  health: LeafIcon,
+  milestone: SproutIcon,
+  map: LeafIcon,
+  community: GrainIcon,
+  learning: StarIcon,
+};
+
+const QUEST_ICON_BG: Record<QuestType, string> = {
+  care: "#E3F2FD",
+  scan: "#E8F5E9",
+  health: "#F1F8E9",
+  milestone: "#FFF8E1",
+  map: "#E8F5E9",
+  community: "#FFF3E0",
+  learning: "#F3E5F5",
+};
+
+export function TerritoryMap({ zones, seedDrops, plantMarkers = [] }: TerritoryMapProps) {
   const mapRef = useRef<MapView>(null);
   const [region, setRegion] = useState(DEFAULT_REGION);
-  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const { activeQuests, completedQuestIds, completeQuest } = useQuestStore();
 
   // ── Loading animations ──────────────────────────────────────────
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -74,23 +169,45 @@ export function TerritoryMap({ zones, seedDrops }: TerritoryMapProps) {
     if (!loading) return;
     const pulse = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulseAnim, { toValue: 1.12, duration: 900, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(pulseAnim, { toValue: 1, duration: 900, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-      ])
+        Animated.timing(pulseAnim, {
+          toValue: 1.12,
+          duration: 900,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 900,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
     );
     const bounce = (anim: Animated.Value, delay: number) =>
       Animated.loop(
         Animated.sequence([
           Animated.delay(delay),
-          Animated.timing(anim, { toValue: -6, duration: 280, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-          Animated.timing(anim, { toValue: 0, duration: 280, easing: Easing.in(Easing.quad), useNativeDriver: true }),
-        ])
+          Animated.timing(anim, {
+            toValue: -6,
+            duration: 280,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: true,
+          }),
+          Animated.timing(anim, {
+            toValue: 0,
+            duration: 280,
+            easing: Easing.in(Easing.quad),
+            useNativeDriver: true,
+          }),
+        ]),
       );
     pulse.start();
     bounce(dotAnim1, 0).start();
     bounce(dotAnim2, 160).start();
     bounce(dotAnim3, 320).start();
-    return () => { pulse.stop(); };
+    return () => {
+      pulse.stop();
+    };
   }, [loading, pulseAnim, dotAnim1, dotAnim2, dotAnim3]);
 
   useEffect(() => {
@@ -105,7 +222,6 @@ export function TerritoryMap({ zones, seedDrops }: TerritoryMapProps) {
             latitude: loc.coords.latitude,
             longitude: loc.coords.longitude,
           };
-          setUserLocation(coords);
           const newRegion = {
             ...coords,
             latitudeDelta: 0.012,
@@ -127,7 +243,12 @@ export function TerritoryMap({ zones, seedDrops }: TerritoryMapProps) {
       {/* Full-screen map */}
       {loading && (
         <View style={styles.loadingOverlay}>
-          <Animated.View style={[styles.loadingIconCircle, { transform: [{ scale: pulseAnim }] }]}>
+          <Animated.View
+            style={[
+              styles.loadingIconCircle,
+              { transform: [{ scale: pulseAnim }] },
+            ]}
+          >
             <Svg width={48} height={48} viewBox="0 0 24 24" fill="none">
               <Path
                 d="M3 6L9 3L15 6L21 3V18L15 21L9 18L3 21V6Z"
@@ -144,11 +265,19 @@ export function TerritoryMap({ zones, seedDrops }: TerritoryMapProps) {
           </Animated.View>
           <Text style={styles.loadingTitle}>Finding your territory</Text>
           <View style={styles.dotsRow}>
-            <Animated.View style={[styles.dot, { transform: [{ translateY: dotAnim1 }] }]} />
-            <Animated.View style={[styles.dot, { transform: [{ translateY: dotAnim2 }] }]} />
-            <Animated.View style={[styles.dot, { transform: [{ translateY: dotAnim3 }] }]} />
+            <Animated.View
+              style={[styles.dot, { transform: [{ translateY: dotAnim1 }] }]}
+            />
+            <Animated.View
+              style={[styles.dot, { transform: [{ translateY: dotAnim2 }] }]}
+            />
+            <Animated.View
+              style={[styles.dot, { transform: [{ translateY: dotAnim3 }] }]}
+            />
           </View>
-          <Text style={styles.loadingHint}>Getting your location & nearby zones</Text>
+          <Text style={styles.loadingHint}>
+            Getting your location & nearby zones
+          </Text>
         </View>
       )}
       <MapView
@@ -160,7 +289,7 @@ export function TerritoryMap({ zones, seedDrops }: TerritoryMapProps) {
         showsUserLocation
         showsMyLocationButton={false}
         showsCompass={false}
-        showsPointsOfInterest={false}
+        showsPointsOfInterests={false}
         showsBuildings={false}
         mapType="standard"
       >
@@ -186,7 +315,7 @@ export function TerritoryMap({ zones, seedDrops }: TerritoryMapProps) {
           >
             <View style={styles.zoneMarker}>
               <View style={styles.zoneAvatar}>
-                <Text style={styles.zoneAvatarText}>🌿</Text>
+                <LeafIcon size={28} />
               </View>
               <View style={styles.zoneBadge}>
                 <Text style={styles.zoneBadgeText}>Active</Text>
@@ -205,56 +334,98 @@ export function TerritoryMap({ zones, seedDrops }: TerritoryMapProps) {
           >
             <View style={styles.seedMarker}>
               <View style={styles.seedAvatar}>
-                <Text style={styles.seedAvatarText}>🌱</Text>
+                <SproutIcon size={26} />
               </View>
               <View style={styles.seedPointsBadge}>
-                <Text style={styles.seedPointsText}>🌟</Text>
+                <StarIcon size={11} />
+              </View>
+            </View>
+          </Marker>
+        ))}
+
+        {/* User's plants from garden */}
+        {plantMarkers.map((plant) => (
+          <Marker
+            key={`plant-${plant.id}`}
+            coordinate={plant.coordinate}
+            title={plant.name}
+            description={`${plant.species} · ${plant.health}`}
+          >
+            <View style={styles.plantMarker}>
+              <View style={styles.plantMarkerAvatar}>
+                <SproutIcon size={18} color="#FFFFFF" />
               </View>
             </View>
           </Marker>
         ))}
       </MapView>
 
-      {/* Floating event card */}
+      {/* Floating side quests card */}
       <View style={styles.floatingCard}>
-        <View style={styles.cardHeader}>
-          <View style={styles.eventIcon}>
-            <Text style={styles.eventIconText}>💧</Text>
-          </View>
-          <View style={styles.eventInfo}>
-            <Text style={styles.eventTitle}>Watering Week</Text>
-            <Text style={styles.eventDesc}>
-              Join the community in keeping local plots hydrated.
-            </Text>
-          </View>
-        </View>
+        <Text style={styles.cardSectionTitle}>TODAY&apos;S QUESTS</Text>
+        <View style={styles.questList}>
+          {activeQuests.map((quest) => {
+            const isDone = completedQuestIds.includes(quest.instanceId);
+            const QuestIcon = QUEST_ICON[quest.type] ?? LeafIcon;
+            const iconBg = QUEST_ICON_BG[quest.type] ?? "#E8F5E9";
 
-        {/* Progress */}
-        <View style={styles.progressRow}>
-          <Text style={styles.progressLabel}>Progress</Text>
-          <Text style={styles.progressValue}>45/100</Text>
-        </View>
-        <View style={styles.progressBarBg}>
-          <View style={[styles.progressBarFill, { width: "45%" }]} />
-        </View>
-
-        {/* Footer */}
-        <View style={styles.cardFooter}>
-          <View style={styles.avatarStack}>
-            {["🧑‍🌾", "👩‍🌾", "🧑‍🌾"].map((emoji, i) => (
-              <View
-                key={`av-${i}`}
-                style={[styles.stackAvatar, { marginLeft: i > 0 ? -10 : 0, zIndex: 3 - i }]}
-              >
-                <Text style={styles.stackAvatarText}>{emoji}</Text>
+            return (
+              <View key={quest.instanceId} style={styles.questRow}>
+                <View style={[styles.questIconWrap, { backgroundColor: iconBg }]}>
+                  <QuestIcon size={20} color={isDone ? colors.outline : colors.primary} />
+                </View>
+                <View style={styles.questInfo}>
+                  <Text
+                    style={[
+                      styles.questTitle,
+                      isDone && styles.questTitleDone,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {quest.title}
+                  </Text>
+                  <Text style={styles.questXp}>
+                    +{quest.rewardXp} XP · {quest.farmPoints} pts
+                  </Text>
+                </View>
+                <Pressable
+                  style={[
+                    styles.questBtn,
+                    isDone && styles.questBtnDone,
+                  ]}
+                  onPress={() => {
+                    if (!isDone) completeQuest(quest.instanceId);
+                  }}
+                  disabled={isDone}
+                >
+                  <Text
+                    style={[
+                      styles.questBtnText,
+                      isDone && styles.questBtnTextDone,
+                    ]}
+                  >
+                    {isDone ? "Done" : "Go"}
+                  </Text>
+                </Pressable>
               </View>
-            ))}
-            <View style={styles.moreCount}>
-              <Text style={styles.moreCountText}>+12</Text>
-            </View>
-          </View>
-          <View style={styles.contributeBtn}>
-            <Text style={styles.contributeBtnText}>Contribute</Text>
+            );
+          })}
+        </View>
+        <View style={styles.questProgress}>
+          <Text style={styles.questProgressText}>
+            {completedQuestIds.length}/{activeQuests.length} completed
+          </Text>
+          <View style={styles.progressBarBg}>
+            <View
+              style={[
+                styles.progressBarFill,
+                {
+                  width: activeQuests.length > 0
+                    ? `${(completedQuestIds.length / activeQuests.length) * 100}%`
+                    : "0%",
+                },
+              ]}
+            />
           </View>
         </View>
       </View>
@@ -350,9 +521,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   } as ViewStyle,
-  zoneAvatarText: {
-    fontSize: 22,
-  } as TextStyle,
   zoneBadge: {
     backgroundColor: colors.primary,
     borderRadius: 8,
@@ -388,9 +556,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   } as ViewStyle,
-  seedAvatarText: {
-    fontSize: 20,
-  } as TextStyle,
   seedPointsBadge: {
     position: "absolute",
     bottom: -2,
@@ -404,9 +569,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   } as ViewStyle,
-  seedPointsText: {
-    fontSize: 10,
-  } as TextStyle,
+
+  // Plant markers (from garden)
+  plantMarker: {
+    alignItems: "center",
+  } as ViewStyle,
+  plantMarkerAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.primary,
+    borderWidth: 2.5,
+    borderColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  } as ViewStyle,
 
   // Floating card
   floatingCard: {
@@ -417,124 +599,99 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 18,
-    gap: 12,
+    gap: 10,
     shadowColor: "#1a3c2a",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
     shadowRadius: 16,
     elevation: 10,
   } as ViewStyle,
-  cardHeader: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
+  cardSectionTitle: {
+    fontFamily: `${typography.fonts.secondary}-Bold`,
+    fontSize: 11,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurfaceVariant,
+    textTransform: "uppercase",
+    letterSpacing: 2,
+  } as TextStyle,
+
+  // Quest list
+  questList: {
+    gap: 8,
   } as ViewStyle,
-  eventIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "#FFF3E0",
+  questRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  } as ViewStyle,
+  questIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   } as ViewStyle,
-  eventIconText: {
-    fontSize: 22,
-  } as TextStyle,
-  eventInfo: {
+  questInfo: {
     flex: 1,
-    gap: 2,
+    gap: 1,
   } as ViewStyle,
-  eventTitle: {
+  questTitle: {
     fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: typography.weights.bold,
     color: colors.onSurface,
   } as TextStyle,
-  eventDesc: {
-    fontFamily: `${typography.fonts.primary}-Regular`,
-    fontSize: 13,
-    fontWeight: typography.weights.regular,
-    color: colors.onSurfaceVariant,
-    lineHeight: 18,
+  questTitleDone: {
+    textDecorationLine: "line-through",
+    color: colors.outline,
   } as TextStyle,
-
-  // Progress
-  progressRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  } as ViewStyle,
-  progressLabel: {
+  questXp: {
     fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: typography.weights.medium,
     color: colors.onSurfaceVariant,
   } as TextStyle,
-  progressValue: {
-    fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: 18,
-    fontWeight: typography.weights.bold,
-    color: colors.onSurface,
-  } as TextStyle,
-  progressBarBg: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#E8EDE4",
-    overflow: "hidden",
-  } as ViewStyle,
-  progressBarFill: {
-    height: "100%",
-    borderRadius: 4,
+  questBtn: {
     backgroundColor: colors.primary,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
   } as ViewStyle,
+  questBtnDone: {
+    backgroundColor: "#E8EDE4",
+  } as ViewStyle,
+  questBtnText: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 12,
+    fontWeight: typography.weights.bold,
+    color: "#FFFFFF",
+  } as TextStyle,
+  questBtnTextDone: {
+    color: colors.outline,
+  } as TextStyle,
 
-  // Footer
-  cardFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  // Quest progress
+  questProgress: {
+    gap: 6,
     marginTop: 2,
   } as ViewStyle,
-  avatarStack: {
-    flexDirection: "row",
-    alignItems: "center",
-  } as ViewStyle,
-  stackAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#E8F5E9",
-    borderWidth: 2,
-    borderColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
-  } as ViewStyle,
-  stackAvatarText: {
-    fontSize: 14,
-  } as TextStyle,
-  moreCount: {
-    marginLeft: 6,
-    backgroundColor: "#F0F4EC",
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  } as ViewStyle,
-  moreCountText: {
+  questProgressText: {
     fontFamily: `${typography.fonts.primary}-Medium`,
     fontSize: 12,
     fontWeight: typography.weights.medium,
     color: colors.onSurfaceVariant,
   } as TextStyle,
-  contributeBtn: {
-    backgroundColor: colors.primary,
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+
+  // Progress bar
+  progressBarBg: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#E8EDE4",
+    overflow: "hidden",
   } as ViewStyle,
-  contributeBtnText: {
-    fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: 13,
-    fontWeight: typography.weights.bold,
-    color: "#FFFFFF",
-  } as TextStyle,
+  progressBarFill: {
+    height: "100%",
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+  } as ViewStyle,
 });

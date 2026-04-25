@@ -1,22 +1,27 @@
-import React, { useRef, useState } from "react";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useNavigation } from "expo-router";
+import * as Location from "expo-location";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
+  Easing,
   Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  View,
   type TextStyle,
+  View,
   type ViewStyle,
 } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { useNavigation } from "expo-router";
 import Svg, { Path } from "react-native-svg";
+import { CameraGlyphIcon, SproutIcon } from "@/components/icons/GrootedIcons";
 import { colors } from "@/constants/colors";
 import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
 import { PlantService } from "@/services/PlantService";
+import { useGardenStore } from "@/stores/gardenStore";
 import type { ScanResult as ScanResultType } from "@/types/plant";
 
 const createScanSessionId = () =>
@@ -27,6 +32,9 @@ export default function ScanScreen() {
   const [result, setResult] = useState<ScanResultType | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [capturing, setCapturing] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [added, setAdded] = useState(false);
+  const addPlant = useGardenStore((s) => s.addPlant);
   const cameraRef = useRef<CameraView>(null);
   const navigation = useNavigation();
 
@@ -49,30 +57,50 @@ export default function ScanScreen() {
   }, [cameraActive, navigation]);
 
   const handleCapture = async () => {
-    if (capturing) return;
+    if (capturing || analyzing) return;
     setCapturing(true);
     setError(null);
 
     try {
-      let imageBase64 = "";
-      if (cameraRef.current) {
-        const photo = await cameraRef.current.takePictureAsync({
-          quality: 0.7,
+      // Capture photo and GPS in parallel
+      const [photoResult, locationResult] = await Promise.allSettled([
+        cameraRef.current?.takePictureAsync({
+          quality: 0.3,
           base64: true,
-        });
-        imageBase64 = photo?.base64 ?? "";
+          imageType: "jpg",
+        }),
+        Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }),
+      ]);
+
+      const photo = photoResult.status === "fulfilled" ? photoResult.value : null;
+      const location = locationResult.status === "fulfilled" ? locationResult.value : null;
+      const imageBase64 = photo?.base64 ?? "";
+
+      if (!imageBase64) {
+        setError("Failed to capture photo. Please try again.");
+        setCapturing(false);
+        return;
       }
+
+      // Photo taken — switch to analyzing state
+      setCapturing(false);
+      setAnalyzing(true);
 
       const scanResult = await PlantService.scan({
         capturedAt: new Date().toISOString(),
         imageBase64,
         scanSessionId: createScanSessionId(),
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
       });
       setResult(scanResult);
-    } catch {
-      setError("Plant scan failed. Check the backend API key and try again.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("[Scan] Failed:", msg);
+      setError(`Scan failed: ${msg}`);
     } finally {
       setCapturing(false);
+      setAnalyzing(false);
     }
   };
 
@@ -127,11 +155,15 @@ export default function ScanScreen() {
 
         <Text style={styles.permTitle}>Scan your plants</Text>
         <Text style={styles.permDesc}>
-          Grooted uses your camera to identify plant species, check their health, and track growth over time.
+          Grooted uses your camera to identify plant species, check their
+          health, and track growth over time.
         </Text>
 
         <Pressable
-          style={({ pressed }) => [styles.permButton, pressed && styles.permButtonPressed]}
+          style={({ pressed }) => [
+            styles.permButton,
+            pressed && styles.permButtonPressed,
+          ]}
           onPress={requestPermission}
         >
           <Text style={styles.permButtonText}>Enable Camera</Text>
@@ -142,6 +174,11 @@ export default function ScanScreen() {
         </Text>
       </View>
     );
+  }
+
+  // ── Analyzing state ────────────────────────────────────────────
+  if (analyzing) {
+    return <AnalyzingScreen />;
   }
 
   // ── Result view ───────────────────────────────────────────────
@@ -185,18 +222,45 @@ export default function ScanScreen() {
 
           {/* Actions */}
           <Pressable
-            style={({ pressed }) => [styles.addButton, pressed && { opacity: 0.85 }]}
+            style={({ pressed }) => [
+              styles.addButton,
+              added && styles.addButtonDone,
+              pressed && !added && { opacity: 0.85 },
+            ]}
+            disabled={added}
+            onPress={() => {
+              if (!result) return;
+              addPlant({
+                id: result.scanSessionId ?? `plant_${Date.now()}`,
+                name: result.species.commonName,
+                species: result.species,
+                health: result.health,
+                plantedAt: result.capturedAt ?? new Date().toISOString(),
+                imageUrl: result.imageUrl,
+                latitude: result.latitude,
+                longitude: result.longitude,
+              });
+              setAdded(true);
+            }}
           >
-            <Text style={styles.addButtonText}>🌱  Add to Garden</Text>
+            <SproutIcon color="#FFFFFF" size={20} />
+            <Text style={styles.addButtonText}>
+              {added ? "Added to Garden ✓" : "Add to Garden"}
+            </Text>
           </Pressable>
           <Pressable
-            style={({ pressed }) => [styles.rescanButton, pressed && { opacity: 0.7 }]}
+            style={({ pressed }) => [
+              styles.rescanButton,
+              pressed && { opacity: 0.7 },
+            ]}
             onPress={() => {
               setResult(null);
               setError(null);
+              setAdded(false);
             }}
           >
-            <Text style={styles.rescanText}>📷  Scan Another</Text>
+            <CameraGlyphIcon size={20} />
+            <Text style={styles.rescanText}>Scan Another</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -207,56 +271,230 @@ export default function ScanScreen() {
   return (
     <View style={styles.cameraContainer}>
       <StatusBar hidden />
-      <CameraView
-        ref={cameraRef}
-        style={styles.camera}
-        facing="back"
-      >
-        {/* Overlay */}
-        <View style={styles.overlay}>
-          {/* Top hint */}
-          <View style={styles.topHint}>
-            <Text style={styles.topHintText}>
-              Point at a plant and tap the button
-            </Text>
-          </View>
-
-          {/* Error message */}
-          {error ? (
-            <View style={styles.errorBanner}>
-              <Text style={styles.errorText}>{error}</Text>
-            </View>
-          ) : null}
-
-          {/* Viewfinder frame */}
-          <View style={styles.viewfinder}>
-            <View style={[styles.corner, styles.cornerTL]} />
-            <View style={[styles.corner, styles.cornerTR]} />
-            <View style={[styles.corner, styles.cornerBL]} />
-            <View style={[styles.corner, styles.cornerBR]} />
-          </View>
-
-          {/* Bottom controls */}
-          <View style={styles.bottomControls}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.captureButton,
-                pressed && styles.captureButtonPressed,
-              ]}
-              onPress={handleCapture}
-              disabled={capturing}
-            >
-              <View style={styles.captureOuter}>
-                {capturing ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                ) : (
-                  <View style={styles.captureInner} />
-                )}
-              </View>
-            </Pressable>
-          </View>
+      <CameraView ref={cameraRef} style={styles.camera} facing="back" />
+      {/* Overlay — absolute positioned on top of camera */}
+      <View style={styles.overlay}>
+        {/* Top hint */}
+        <View style={styles.topHint}>
+          <Text style={styles.topHintText}>
+            Point at a plant and tap the button
+          </Text>
         </View>
-      </CameraView>
+
+        {/* Error message */}
+        {error ? (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : null}
+
+        {/* Viewfinder frame */}
+        <View style={styles.viewfinder}>
+          <View style={[styles.corner, styles.cornerTL]} />
+          <View style={[styles.corner, styles.cornerTR]} />
+          <View style={[styles.corner, styles.cornerBL]} />
+          <View style={[styles.corner, styles.cornerBR]} />
+        </View>
+
+        {/* Bottom controls */}
+        <View style={styles.bottomControls}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.captureButton,
+              pressed && styles.captureButtonPressed,
+            ]}
+            onPress={handleCapture}
+            disabled={capturing}
+          >
+            <View style={styles.captureOuter}>
+              {capturing ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <View style={styles.captureInner} />
+              )}
+            </View>
+          </Pressable>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const PLANT_TIPS = [
+  "🌱 Plants can recognize their siblings and share nutrients through root networks",
+  "🌿 Talking to your plants isn't crazy — CO₂ from your breath helps them grow",
+  "🍃 The world's oldest living plant is over 5,000 years old",
+  "🌻 Sunflowers track the sun across the sky — it's called heliotropism",
+  "🪴 Indoor plants can reduce stress levels by up to 37%",
+  "🌵 Cacti can survive up to 2 years without water",
+  "💧 Overwatering kills more houseplants than underwatering",
+  "🌳 A single tree can absorb 48 pounds of CO₂ per year",
+];
+
+const STEPS = [
+  "Photo captured",
+  "Identifying species",
+  "Checking health",
+  "Preparing care tips",
+];
+
+function AnalyzingScreen() {
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const progressAnim = useRef(new Animated.Value(0)).current;
+  const [currentStep, setCurrentStep] = useState(0);
+  const [tipIndex, setTipIndex] = useState(
+    () => Math.floor(Math.random() * PLANT_TIPS.length),
+  );
+  const tipOpacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // Pulse animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.08,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+
+    // Step progression
+    const stepTimers = STEPS.map((_, i) =>
+      setTimeout(() => setCurrentStep(i), i * 3000 + 500),
+    );
+
+    // Progress bar
+    Animated.timing(progressAnim, {
+      toValue: 1,
+      duration: 12000,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: false,
+    }).start();
+
+    // Rotate tips
+    const tipTimer = setInterval(() => {
+      Animated.timing(tipOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setTipIndex((prev) => (prev + 1) % PLANT_TIPS.length);
+        Animated.timing(tipOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 4000);
+
+    return () => {
+      stepTimers.forEach(clearTimeout);
+      clearInterval(tipTimer);
+    };
+  }, [pulseAnim, progressAnim, tipOpacity]);
+
+  const progressWidth = progressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["5%", "95%"],
+  });
+
+  return (
+    <View style={styles.analyzingContainer}>
+      <View style={styles.analyzingContent}>
+        {/* Pulsing icon */}
+        <Animated.View
+          style={[
+            styles.analyzingIconCircle,
+            { transform: [{ scale: pulseAnim }] },
+          ]}
+        >
+          <Svg width={44} height={44} viewBox="0 0 24 24" fill="none">
+            <Path
+              d="M12 22V12"
+              stroke={colors.primary}
+              strokeWidth={1.8}
+              strokeLinecap="round"
+            />
+            <Path
+              d="M12 12C12 8 8 6 4 6C4 10 8 12 12 12Z"
+              stroke={colors.primary}
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <Path
+              d="M12 15C12 11 16 9 20 9C20 13 16 15 12 15Z"
+              stroke={colors.primary}
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+        </Animated.View>
+
+        <Text style={styles.analyzingTitle}>Analyzing your plant</Text>
+
+        {/* Progress bar */}
+        <View style={styles.analyzingProgressTrack}>
+          <Animated.View
+            style={[styles.analyzingProgressFill, { width: progressWidth }]}
+          />
+        </View>
+
+        {/* Steps */}
+        <View style={styles.analyzingSteps}>
+          {STEPS.map((label, i) => {
+            const done = i < currentStep;
+            const active = i === currentStep;
+            return (
+              <View key={label} style={styles.stepRow}>
+                <View
+                  style={[
+                    styles.stepDot,
+                    done && styles.stepDotDone,
+                    active && styles.stepDotActive,
+                  ]}
+                >
+                  {done && (
+                    <Svg width={10} height={10} viewBox="0 0 24 24" fill="none">
+                      <Path
+                        d="M5 12L10 17L19 7"
+                        stroke="#FFF"
+                        strokeWidth={3}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </Svg>
+                  )}
+                  {active && <View style={styles.stepDotPulse} />}
+                </View>
+                <Text
+                  style={[
+                    styles.stepLabel,
+                    done && styles.stepLabelDone,
+                    active && styles.stepLabelActive,
+                  ]}
+                >
+                  {label}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+
+        {/* Rotating tip */}
+        <Animated.View style={[styles.tipCard, { opacity: tipOpacity }]}>
+          <Text style={styles.tipText}>{PLANT_TIPS[tipIndex]}</Text>
+        </Animated.View>
+      </View>
     </View>
   );
 }
@@ -382,7 +620,7 @@ const styles = StyleSheet.create({
     flex: 1,
   } as ViewStyle,
   overlay: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: spacing.xl,
@@ -498,7 +736,7 @@ const styles = StyleSheet.create({
   // Result
   resultContainer: {
     padding: spacing.gutter,
-    paddingBottom: 80,
+    paddingBottom: 120,
     gap: spacing.md,
   } as ViewStyle,
   resultCard: {
@@ -593,8 +831,15 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingVertical: 14,
     alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.xs,
+    justifyContent: "center",
     marginTop: spacing.sm,
     ...shadows.md,
+  } as ViewStyle,
+  addButtonDone: {
+    backgroundColor: colors.primaryLight,
+    opacity: 0.8,
   } as ViewStyle,
   addButtonText: {
     fontFamily: `${typography.fonts.primary}-Bold`,
@@ -604,6 +849,9 @@ const styles = StyleSheet.create({
   } as TextStyle,
   rescanButton: {
     alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.xs,
+    justifyContent: "center",
     paddingVertical: 12,
   } as ViewStyle,
   rescanText: {
@@ -611,5 +859,130 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: typography.weights.bold,
     color: colors.primary,
+  } as TextStyle,
+
+  // Analyzing state
+  analyzingContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.xl,
+  } as ViewStyle,
+  analyzingContent: {
+    alignItems: "center",
+    gap: 8,
+    maxWidth: 300,
+  } as ViewStyle,
+  analyzingIconCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: "rgba(188, 240, 174, 0.25)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  } as ViewStyle,
+  analyzingTitle: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 22,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurface,
+    textAlign: "center",
+    letterSpacing: -0.3,
+    marginBottom: 4,
+  } as TextStyle,
+  analyzingSubtitle: {
+    fontFamily: `${typography.fonts.primary}-Regular`,
+    fontSize: 14,
+    fontWeight: typography.weights.regular,
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+    lineHeight: 20,
+  } as TextStyle,
+  analyzingProgressTrack: {
+    width: "100%",
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(188, 240, 174, 0.3)",
+    overflow: "hidden",
+    marginTop: 8,
+    marginBottom: 4,
+  } as ViewStyle,
+  analyzingProgressFill: {
+    height: "100%",
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+  } as ViewStyle,
+  analyzingSteps: {
+    marginTop: 20,
+    gap: 16,
+    alignSelf: "stretch",
+  } as ViewStyle,
+  stepRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+  } as ViewStyle,
+  stepDot: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: colors.outlineVariant,
+    backgroundColor: colors.background,
+    alignItems: "center",
+    justifyContent: "center",
+  } as ViewStyle,
+  stepDotDone: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  } as ViewStyle,
+  stepDotActive: {
+    borderColor: colors.primary,
+    borderWidth: 2.5,
+    backgroundColor: colors.background,
+  } as ViewStyle,
+  stepDotPulse: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primary,
+  } as ViewStyle,
+  stepLabel: {
+    fontFamily: `${typography.fonts.primary}-Regular`,
+    fontSize: 15,
+    fontWeight: typography.weights.regular,
+    color: colors.outline,
+  } as TextStyle,
+  stepLabelDone: {
+    color: colors.onSurface,
+    fontFamily: `${typography.fonts.primary}-Medium`,
+    fontWeight: typography.weights.medium,
+  } as TextStyle,
+  stepLabelActive: {
+    color: colors.primary,
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontWeight: typography.weights.bold,
+  } as TextStyle,
+  tipCard: {
+    marginTop: 28,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 16,
+    alignSelf: "stretch",
+    shadowColor: "#1a3c2a",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+  } as ViewStyle,
+  tipText: {
+    fontFamily: `${typography.fonts.primary}-Medium`,
+    fontSize: 13,
+    fontWeight: typography.weights.medium,
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+    lineHeight: 19,
   } as TextStyle,
 });

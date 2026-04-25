@@ -4,23 +4,32 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
   type TextStyle,
+  View,
   type ViewStyle,
 } from "react-native";
+import {
+  ChartIcon,
+  GrainIcon,
+  LeafIcon,
+  LockIcon,
+  MedalIcon,
+  SettingsIcon,
+} from "@/components/icons/GrootedIcons";
 import { Avatar } from "@/components/ui/Avatar";
 import { colors } from "@/constants/colors";
 import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
+import { TAB_BAR_SPACE } from "./_layout";
 import { useAuthStore } from "@/stores/authStore";
 import { useStreakStore } from "@/stores/streakStore";
 
 // ── Demo data ───────────────────────────────────────────────────────
 
 const NEIGHBORS = [
-  { rank: 1, name: "GreenThumb_39", title: "Master Harvester", points: 3050, medal: "🥇" },
-  { rank: 2, name: "CitySprout", title: "Balcony Botanist", points: 2890, medal: "🥈" },
-  { rank: 3, name: "UrbanOak", title: "Seed Saver", points: 1500, medal: "🥉" },
+  { rank: 1, name: "GreenThumb_39", title: "Master Harvester", points: 3050 },
+  { rank: 2, name: "CitySprout", title: "Balcony Botanist", points: 2890 },
+  { rank: 3, name: "UrbanOak", title: "Seed Saver", points: 1500 },
 ];
 
 export default function ProfileScreen() {
@@ -57,15 +66,18 @@ export default function ProfileScreen() {
             <View style={styles.yourRankNameRow}>
               <Text style={styles.yourRankName}>{name}</Text>
               <View style={styles.streakPill}>
-                <Text style={styles.streakPillIcon}>🔒</Text>
+                <LockIcon size={14} />
                 <Text style={styles.streakPillText}>
                   {streakDays} DAY{"\n"}STREAK
                 </Text>
               </View>
             </View>
-            <Text style={styles.yourRankPoints}>
-              🌿 {userPoints.toLocaleString()} points
-            </Text>
+            <View style={styles.pointsRow}>
+              <LeafIcon size={16} />
+              <Text style={styles.yourRankPoints}>
+                {userPoints.toLocaleString()} points
+              </Text>
+            </View>
           </View>
         </View>
         <View style={styles.nextTier}>
@@ -96,7 +108,13 @@ export default function ProfileScreen() {
               </Text>
               <Text style={styles.neighborPtsLabel}>pts</Text>
             </View>
-            <Text style={styles.neighborMedal}>{neighbor.medal}</Text>
+            <MedalIcon
+              accentColor={
+                neighbor.rank === 1 ? colors.primary : colors.secondary
+              }
+              color={neighbor.rank === 1 ? colors.accent : colors.tertiary}
+              size={26}
+            />
           </View>
         ))}
       </View>
@@ -108,7 +126,7 @@ export default function ProfileScreen() {
           pressed && { opacity: 0.9 },
         ]}
       >
-        <Text style={styles.harvestIcon}>🌾</Text>
+        <GrainIcon color="#FFFFFF" size={22} />
         <Text style={styles.harvestText}>LOG HARVEST TO GAIN POINTS</Text>
       </Pressable>
 
@@ -116,18 +134,18 @@ export default function ProfileScreen() {
       <View style={styles.linksRow}>
         <Link href="/settings" asChild>
           <Pressable style={styles.linkItem}>
-            <Text style={styles.linkIcon}>⚙️</Text>
+            <SettingsIcon size={24} />
             <Text style={styles.linkText}>Settings</Text>
           </Pressable>
         </Link>
         <View style={styles.linkDivider} />
         <Pressable style={styles.linkItem}>
-          <Text style={styles.linkIcon}>📊</Text>
+          <ChartIcon size={24} />
           <Text style={styles.linkText}>My Stats</Text>
         </Pressable>
         <View style={styles.linkDivider} />
         <Pressable style={styles.linkItem}>
-          <Text style={styles.linkIcon}>🏅</Text>
+          <MedalIcon size={24} />
           <Text style={styles.linkText}>Badges</Text>
         </Pressable>
       </View>
@@ -142,7 +160,7 @@ const styles = StyleSheet.create({
   } as ViewStyle,
   container: {
     padding: spacing.gutter,
-    paddingBottom: 80,
+    paddingBottom: TAB_BAR_SPACE + 16,
     gap: spacing.md,
   } as ViewStyle,
 
@@ -233,9 +251,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   } as ViewStyle,
-  streakPillIcon: {
-    fontSize: 11,
-  } as TextStyle,
   streakPillText: {
     fontFamily: `${typography.fonts.secondary}-Bold`,
     fontSize: 9,
@@ -249,8 +264,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: typography.weights.medium,
     color: colors.onSurfaceVariant,
-    marginTop: 2,
   } as TextStyle,
+  pointsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 2,
+  } as ViewStyle,
   nextTier: {
     gap: 6,
   } as ViewStyle,
@@ -334,10 +354,6 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.medium,
     color: colors.onSurfaceVariant,
   } as TextStyle,
-  neighborMedal: {
-    fontSize: 22,
-    marginLeft: 4,
-  } as TextStyle,
 
   // Harvest CTA
   harvestButton: {
@@ -352,9 +368,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     ...shadows.md,
   } as ViewStyle,
-  harvestIcon: {
-    fontSize: 18,
-  } as TextStyle,
   harvestText: {
     fontFamily: `${typography.fonts.primary}-Bold`,
     fontSize: 14,
@@ -377,9 +390,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     gap: 4,
   } as ViewStyle,
-  linkIcon: {
-    fontSize: 20,
-  } as TextStyle,
   linkText: {
     fontFamily: `${typography.fonts.primary}-Medium`,
     fontSize: 12,
