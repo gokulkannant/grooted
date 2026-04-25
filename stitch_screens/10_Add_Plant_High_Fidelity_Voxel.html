@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GROOTED - Add First Plant</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#dadada",
+                    "primary": "#154212",
+                    "surface-container-high": "#e8e8e8",
+                    "on-surface": "#1a1c1c",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#3b6934",
+                    "surface-container-low": "#f3f3f3",
+                    "outline-variant": "#c2c9bb",
+                    "primary-container": "#2d5a27",
+                    "tertiary-fixed-dim": "#e9c400",
+                    "on-background": "#1a1c1c",
+                    "on-secondary-fixed": "#2e1500",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#683d0f",
+                    "inverse-primary": "#a1d494",
+                    "surface-bright": "#f9f9f9",
+                    "secondary-container": "#ffbf87",
+                    "inverse-surface": "#2f3131",
+                    "tertiary-fixed": "#ffe16d",
+                    "tertiary-container": "#c9a900",
+                    "surface-variant": "#e2e2e2",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#7a4b1e",
+                    "on-surface-variant": "#42493e",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#f9ba82",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#835425",
+                    "inverse-on-surface": "#f1f1f1",
+                    "background": "#f9f9f9",
+                    "on-primary-fixed": "#002201",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#eeeeee",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#72796e",
+                    "on-tertiary-fixed-variant": "#544600",
+                    "on-primary-container": "#9dd090",
+                    "tertiary": "#705d00",
+                    "primary-fixed-dim": "#a1d494",
+                    "surface": "#f9f9f9",
+                    "on-tertiary-fixed": "#221b00",
+                    "on-primary-fixed-variant": "#23501e",
+                    "primary-fixed": "#bcf0ae",
+                    "secondary-fixed": "#ffdcc1",
+                    "on-tertiary-container": "#4c3e00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "lg": "40px",
+                    "sm": "16px",
+                    "gutter": "24px",
+                    "xl": "64px",
+                    "md": "24px",
+                    "margin": "32px",
+                    "xs": "8px"
+            },
+            "fontFamily": {
+                    "label-bold": ["Space Grotesk"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "pixel-code": ["Space Grotesk"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "headline-xl": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-bold": ["14px", { "lineHeight": "1", "fontWeight": "700" }],
+                    "headline-md": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                    "pixel-code": ["12px", { "lineHeight": "1", "fontWeight": "500" }],
+                    "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "500" }],
+                    "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "500" }],
+                    "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                    "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "800" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col items-center selection:bg-tertiary-fixed selection:text-on-tertiary-fixed">
+<!-- Main Voxel Canvas -->
+<main class="w-full max-w-lg px-gutter py-xl flex flex-col gap-lg">
+<!-- Header -->
+<header class="flex flex-col gap-xs mb-md">
+<h1 class="font-headline-xl text-headline-xl text-primary-container uppercase tracking-tight">Plant<br/>Your Roots</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Let's build your collection. Add your first plant to get started.</p>
+</header>
+<!-- Upload Block (Voxel Style) -->
+<section class="relative w-full aspect-square bg-surface-container-high border-4 border-black shadow-[8px_8px_0px_0px_#000000] flex flex-col items-center justify-center gap-sm cursor-pointer hover:bg-surface-variant hover:shadow-[12px_12px_0px_0px_#000000] hover:-translate-y-1 hover:-translate-x-1 active:shadow-none active:translate-x-[8px] active:translate-y-[8px] transition-all duration-150 group overflow-hidden">
+<!-- Decorative inner grid to emphasize voxel feel -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: linear-gradient(#000 2px, transparent 2px), linear-gradient(90deg, #000 2px, transparent 2px); background-size: 32px 32px;"></div>
+<span class="material-symbols-outlined text-[80px] text-primary-container group-hover:scale-110 transition-transform duration-200" style="font-variation-settings: 'FILL' 1;">add_a_photo</span>
+<div class="bg-black text-white px-sm py-xs font-label-bold text-label-bold uppercase tracking-widest border-2 border-transparent group-hover:border-white">
+                Upload Photo
+            </div>
+</section>
+<!-- Form Elements -->
+<form class="flex flex-col gap-lg mt-md">
+<!-- Input: Plant Name -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-label-bold text-on-surface uppercase flex items-center gap-xs" for="plant-name">
+<span class="w-3 h-3 bg-tertiary-container border-2 border-black inline-block"></span>
+                    Plant Name
+                </label>
+<input class="w-full bg-surface border-4 border-black font-body-lg text-body-lg text-on-surface p-sm shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.1)] focus:outline-none focus:ring-0 focus:bg-surface-container-lowest focus:shadow-[inset_6px_6px_0px_0px_rgba(0,0,0,0.15)] transition-all rounded-none placeholder:text-outline" id="plant-name" placeholder="e.g. Fernie Sanders" type="text"/>
+</div>
+<!-- Input: Plant Type (Dropdown) -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-label-bold text-on-surface uppercase flex items-center gap-xs" for="plant-type">
+<span class="w-3 h-3 bg-secondary-container border-2 border-black inline-block"></span>
+                    Species / Type
+                </label>
+<div class="relative w-full">
+<select class="w-full appearance-none bg-surface border-4 border-black font-body-lg text-body-lg text-on-surface p-sm pr-xl shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.1)] focus:outline-none focus:ring-0 focus:bg-surface-container-lowest transition-all rounded-none" id="plant-type">
+<option disabled="" selected="" value="">Select a type...</option>
+<option value="monstera">Monstera</option>
+<option value="pothos">Pothos</option>
+<option value="succulent">Succulent</option>
+<option value="fern">Fern</option>
+<option value="calathea">Calathea</option>
+</select>
+<div class="absolute right-0 top-0 bottom-0 w-12 border-l-4 border-black bg-surface-container flex items-center justify-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface font-black text-2xl">arrow_drop_down</span>
+</div>
+</div>
+</div>
+<!-- Input: Growth Stage (Voxel Radio Chips) -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-label-bold text-on-surface uppercase flex items-center gap-xs mb-xs">
+<span class="w-3 h-3 bg-primary border-2 border-black inline-block"></span>
+                    Growth Stage
+                </label>
+<div class="grid grid-cols-3 gap-unit">
+<label class="relative cursor-pointer">
+<input class="peer sr-only" name="growth-stage" type="radio" value="seedling"/>
+<div class="h-16 flex flex-col items-center justify-center border-4 border-black bg-surface text-on-surface-variant font-label-bold text-label-bold uppercase transition-all peer-checked:bg-primary-container peer-checked:text-on-primary-container peer-checked:shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.3)] hover:bg-surface-container peer-active:scale-95">
+<span class="material-symbols-outlined text-xl mb-1">spa</span>
+                            Seed
+                        </div>
+</label>
+<label class="relative cursor-pointer">
+<input checked="" class="peer sr-only" name="growth-stage" type="radio" value="juvenile"/>
+<div class="h-16 flex flex-col items-center justify-center border-4 border-black border-l-0 bg-surface text-on-surface-variant font-label-bold text-label-bold uppercase transition-all peer-checked:bg-primary-container peer-checked:text-on-primary-container peer-checked:shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.3)] peer-checked:border-l-4 hover:bg-surface-container peer-active:scale-95">
+<span class="material-symbols-outlined text-xl mb-1">local_florist</span>
+                            Growing
+                        </div>
+</label>
+<label class="relative cursor-pointer">
+<input class="peer sr-only" name="growth-stage" type="radio" value="mature"/>
+<div class="h-16 flex flex-col items-center justify-center border-4 border-black border-l-0 bg-surface text-on-surface-variant font-label-bold text-label-bold uppercase transition-all peer-checked:bg-primary-container peer-checked:text-on-primary-container peer-checked:shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.3)] peer-checked:border-l-4 hover:bg-surface-container peer-active:scale-95">
+<span class="material-symbols-outlined text-xl mb-1">forest</span>
+                            Mature
+                        </div>
+</label>
+</div>
+</div>
+<!-- Action Button -->
+<button class="mt-lg w-full bg-tertiary-container text-on-tertiary-container border-4 border-black shadow-[8px_8px_0px_0px_#000000] py-sm px-md flex items-center justify-between font-headline-md text-headline-md uppercase tracking-wide hover:shadow-[10px_10px_0px_0px_#000000] hover:-translate-y-1 hover:-translate-x-1 active:shadow-none active:translate-x-[8px] active:translate-y-[8px] transition-all duration-150 group" type="button">
+<span>Add Plant</span>
+<span class="material-symbols-outlined text-3xl group-hover:translate-x-2 transition-transform border-l-4 border-black pl-sm py-1">arrow_forward</span>
+</button>
+</form>
+</main>
+</body></html>

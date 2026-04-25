@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GROOTED - Home Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#2f3131",
+                        "outline": "#72796e",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container": "#eeeeee",
+                        "surface": "#f9f9f9",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary": "#705d00",
+                        "on-surface": "#1a1c1c",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-background": "#1a1c1c",
+                        "on-secondary-fixed": "#2e1500",
+                        "tertiary-container": "#c9a900",
+                        "secondary": "#835425",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#f9ba82",
+                        "surface-tint": "#3b6934",
+                        "secondary-fixed": "#ffdcc1",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#9dd090",
+                        "surface-container-low": "#f3f3f3",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#221b00",
+                        "outline-variant": "#c2c9bb",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-container": "#ffbf87",
+                        "primary-container": "#2d5a27",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#154212",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#bcf0ae",
+                        "background": "#f9f9f9",
+                        "primary-fixed-dim": "#a1d494",
+                        "on-tertiary-container": "#4c3e00",
+                        "on-secondary-fixed-variant": "#683d0f",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "inverse-primary": "#a1d494",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "on-secondary-container": "#7a4b1e",
+                        "on-surface-variant": "#42493e",
+                        "on-primary-fixed": "#002201",
+                        "tertiary-fixed": "#ffe16d",
+                        "on-tertiary-fixed-variant": "#544600"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "xs": "8px",
+                        "xl": "64px",
+                        "sm": "16px",
+                        "margin": "32px",
+                        "lg": "40px",
+                        "md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "label-bold": ["Space Grotesk"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "pixel-code": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "800" }],
+                        "label-bold": ["14px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "pixel-code": ["12px", { "lineHeight": "1", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom Checkbox Voxel Style */
+        .voxel-checkbox {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 4px solid #000;
+            background-color: #fff;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            transition: all 0.1s;
+        }
+        .voxel-checkbox:checked {
+            background-color: #154212; /* primary */
+        }
+        .voxel-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 0px;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+        .voxel-checkbox:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+        }
+
+        /* Segmented Progress Bar */
+        .segmented-progress {
+            display: flex;
+            gap: 4px;
+            height: 24px;
+            border: 4px solid #000;
+            background: #fff;
+            padding: 2px;
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+        .progress-segment {
+            flex: 1;
+            background: #fff;
+            border: 2px solid #000;
+        }
+        .progress-segment.filled {
+            background: #bcf0ae; /* primary-fixed */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pt-24 pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-20 bg-white dark:bg-zinc-900 border-b-4 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-green-800 dark:text-green-400 text-[28px]" data-icon="potted_plant">potted_plant</span>
+</div>
+<div class="font-['Plus_Jakarta_Sans'] font-black uppercase tracking-tighter text-2xl text-black dark:text-white border-4 border-black px-3 py-1 bg-white">
+            GROOTED
+        </div>
+<button class="hover:bg-zinc-100 dark:hover:bg-zinc-800 active:translate-y-1 transition-all p-2 rounded-DEFAULT flex items-center justify-center">
+<span class="material-symbols-outlined text-green-800 dark:text-green-400 text-[28px]" data-icon="settings">settings</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-4xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-md pt-lg">
+<!-- Status Bar Row -->
+<div class="md:col-span-12 flex gap-md justify-between items-center mb-sm">
+<div class="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-sm py-xs flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-bold text-label-bold text-on-surface">Day 14</span>
+</div>
+<div class="bg-tertiary-fixed border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-sm py-xs flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-tertiary-container" data-icon="stars">stars</span>
+<span class="font-label-bold text-label-bold text-on-tertiary-container">1,240 Farm Points</span>
+</div>
+</div>
+<!-- Primary Plant Voxel Card -->
+<section class="md:col-span-8 bg-surface-container border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col relative overflow-hidden">
+<!-- Header bar for card -->
+<div class="bg-secondary border-b-4 border-black px-sm py-xs flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md text-on-secondary">Sunny Blockflower</h2>
+<div class="bg-primary-fixed border-2 border-black px-xs py-1">
+<span class="font-pixel-code text-pixel-code text-on-primary-fixed-variant uppercase">Lvl 5</span>
+</div>
+</div>
+<!-- 3D Viewport Area -->
+<div class="bg-primary-container relative h-[300px] flex items-center justify-center p-md border-b-4 border-black inset-shadow-sm">
+<!-- Inner shadow to simulate recessed carved hole -->
+<div class="absolute inset-0 shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.5)] pointer-events-none"></div>
+<!-- Placeholder for Voxel Art Image -->
+<img alt="Voxel 3D rendering of a bright yellow sunflower in a chunky brown blocky pot sitting on a green grid pixel grass ground, neubrutalist style, high contrast lighting" class="w-full h-full object-cover opacity-80 mix-blend-luminosity hover:mix-blend-normal transition-all duration-300 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-[200px] max-h-[250px] object-contain bg-white" data-alt="Voxel 3D rendering of a bright yellow sunflower in a chunky brown blocky pot sitting on a green grid pixel grass ground, neubrutalist style, high contrast lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNIn4sDEy2MoV6Ao0JLtLS1ioin-XOs0r4rHT8rj6NygQKDmv5W1tuHjG9-eT46HXaLQ1nxxv3llJ6-ZdEsSwWXvKkgwG_6vyr-t_b4MrqQQU7pI4wXksgNcSfW9P76Zu2UZQVMPAmCr2Y46WUG8F17Aywy0sVKXd_o4rUYUouwTSR1FMb6Ul7M29cMLP6mLc4n0WMgh0_vD0HsbvL94STY4dns4RVRUO2hCDtbXNGfeLnui2Ev8ihXaaJ8uDSdtvYm3Jk0Xqcc4yv"/>
+</div>
+<!-- Stats & Progress -->
+<div class="p-md bg-white">
+<div class="flex justify-between items-end mb-xs">
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Growth XP</span>
+<span class="font-pixel-code text-pixel-code text-outline-variant">450 / 500</span>
+</div>
+<!-- Custom Segmented Progress Bar -->
+<div class="segmented-progress mb-sm">
+<div class="progress-segment filled"></div>
+<div class="progress-segment filled"></div>
+<div class="progress-segment filled"></div>
+<div class="progress-segment filled"></div>
+<div class="progress-segment filled"></div>
+<div class="progress-segment filled"></div>
+<div class="progress-segment filled"></div>
+<div class="progress-segment filled"></div>
+<div class="progress-segment filled"></div>
+<div class="progress-segment"></div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div class="bg-surface-variant border-4 border-black p-xs flex flex-col items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<span class="material-symbols-outlined text-primary mb-1" data-icon="water_drop">water_drop</span>
+<span class="font-label-bold text-label-bold">Hydration</span>
+<span class="font-headline-md text-headline-md">80%</span>
+</div>
+<div class="bg-surface-variant border-4 border-black p-xs flex flex-col items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<span class="material-symbols-outlined text-tertiary-container mb-1" data-icon="light_mode">light_mode</span>
+<span class="font-label-bold text-label-bold">Sunlight</span>
+<span class="font-headline-md text-headline-md">Optimal</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Tasks & Actions -->
+<div class="md:col-span-4 flex flex-col gap-md">
+<!-- Quick Scan Massive Button -->
+<button class="bg-primary-fixed border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:bg-primary-fixed-dim hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] active:translate-y-2 active:translate-x-2 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col items-center justify-center p-lg group relative overflow-hidden">
+<span class="material-symbols-outlined text-[64px] text-on-primary-fixed mb-sm group-active:scale-95 transition-transform" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span class="font-headline-lg text-headline-lg text-on-primary-fixed uppercase tracking-tight">Quick Scan</span>
+<div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+</button>
+<!-- Task List Bento -->
+<section class="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1 flex flex-col">
+<div class="bg-on-surface border-b-4 border-black px-sm py-xs">
+<h3 class="font-headline-md text-headline-md text-white uppercase tracking-tighter">Daily Tasks</h3>
+</div>
+<div class="p-sm flex flex-col gap-sm flex-1">
+<!-- Task Item 1 -->
+<label class="flex items-center gap-sm bg-surface p-xs border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-surface-variant transition-colors group">
+<input checked="" class="voxel-checkbox" type="checkbox"/>
+<span class="font-body-lg text-body-lg text-on-surface flex-1 group-hover:text-primary transition-colors line-through opacity-60">Water Plant</span>
+<div class="bg-tertiary-fixed border-2 border-black px-1">
+<span class="font-pixel-code text-pixel-code">+10 XP</span>
+</div>
+</label>
+<!-- Task Item 2 -->
+<label class="flex items-center gap-sm bg-surface p-xs border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-surface-variant transition-colors group">
+<input class="voxel-checkbox" type="checkbox"/>
+<span class="font-body-lg text-body-lg text-on-surface flex-1 group-hover:text-primary transition-colors">Scan Area</span>
+<div class="bg-tertiary-fixed border-2 border-black px-1">
+<span class="font-pixel-code text-pixel-code">+50 XP</span>
+</div>
+</label>
+<!-- Task Item 3 -->
+<label class="flex items-center gap-sm bg-surface p-xs border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer hover:bg-surface-variant transition-colors group">
+<input class="voxel-checkbox" type="checkbox"/>
+<span class="font-body-lg text-body-lg text-on-surface flex-1 group-hover:text-primary transition-colors">Rotate Pot</span>
+<div class="bg-tertiary-fixed border-2 border-black px-1">
+<span class="font-pixel-code text-pixel-code">+15 XP</span>
+</div>
+</label>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-white dark:bg-zinc-900 h-24 px-4 pb-safe border-t-4 border-black shadow-[0_-4px_0px_0px_rgba(0,0,0,1)]">
+<!-- Active Tab: My Farm -->
+<button class="flex flex-col items-center justify-center bg-green-500 text-black border-4 border-black shadow-none translate-y-1 px-4 py-1 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined text-[28px]" data-icon="potted_plant">potted_plant</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-bold uppercase mt-1">My Farm</span>
+</button>
+<!-- Inactive Tab: Explore -->
+<button class="flex flex-col items-center justify-center text-black dark:text-white border-4 border-black bg-white dark:bg-zinc-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-1 hover:bg-yellow-400 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined text-[28px]" data-icon="explore">explore</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-bold uppercase mt-1">Explore</span>
+</button>
+<!-- Inactive Tab: Scanner -->
+<button class="flex flex-col items-center justify-center text-black dark:text-white border-4 border-black bg-white dark:bg-zinc-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-1 hover:bg-yellow-400 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined text-[28px]" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-bold uppercase mt-1">Scanner</span>
+</button>
+<!-- Inactive Tab: Profile -->
+<button class="flex flex-col items-center justify-center text-black dark:text-white border-4 border-black bg-white dark:bg-zinc-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-1 hover:bg-yellow-400 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined text-[28px]" data-icon="person">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-bold uppercase mt-1">Profile</span>
+</button>
+</nav>
+</body></html>

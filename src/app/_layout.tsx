@@ -1,4 +1,14 @@
 import { useFonts } from "expo-font";
+import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold
+} from "@expo-google-fonts/plus-jakarta-sans";
+import {
+  SpaceGrotesk_500Medium,
+  SpaceGrotesk_700Bold
+} from "@expo-google-fonts/space-grotesk";
 import { Slot, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
@@ -19,7 +29,14 @@ export default function RootLayout() {
   const { register } = useNotifications();
   const { isOnline } = useNetwork();
   const { hasHydrated, isAuthenticated, lastActivityAt, clearAuth } = useAuthStore();
-  const [fontsLoaded] = useFonts({});
+  const [fontsLoaded] = useFonts({
+    "PlusJakartaSans-Regular": PlusJakartaSans_400Regular,
+    "PlusJakartaSans-Medium": PlusJakartaSans_500Medium,
+    "PlusJakartaSans-Bold": PlusJakartaSans_700Bold,
+    "PlusJakartaSans-ExtraBold": PlusJakartaSans_800ExtraBold,
+    "SpaceGrotesk-Medium": SpaceGrotesk_500Medium,
+    "SpaceGrotesk-Bold": SpaceGrotesk_700Bold,
+  });
 
   useEffect(() => {
     if (!hasHydrated || !fontsLoaded) return;

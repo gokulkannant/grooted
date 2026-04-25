@@ -1,14 +1,18 @@
 export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
+  unit: 4,
+  xs: 8,
+  sm: 16,
+  md: 24,
+  lg: 40,
+  xl: 64,
+  gutter: 24,
+  margin: 32,
 } as const;
 
 export const radius = {
-  sm: 4,
-  md: 8,
-  lg: 12,
-  full: 999,
+  none: 0,
+  sm: 0,
+  md: 0,
+  lg: 0,
+  full: 0,
 } as const;

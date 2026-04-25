@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GROOTED - Map View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#2f3131",
+                        "outline": "#72796e",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container": "#eeeeee",
+                        "surface": "#f9f9f9",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary": "#705d00",
+                        "on-surface": "#1a1c1c",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-background": "#1a1c1c",
+                        "on-secondary-fixed": "#2e1500",
+                        "tertiary-container": "#c9a900",
+                        "secondary": "#835425",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#f9ba82",
+                        "surface-tint": "#3b6934",
+                        "secondary-fixed": "#ffdcc1",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#9dd090",
+                        "surface-container-low": "#f3f3f3",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#221b00",
+                        "outline-variant": "#c2c9bb",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-container": "#ffbf87",
+                        "primary-container": "#2d5a27",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#154212",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#bcf0ae",
+                        "background": "#f9f9f9",
+                        "primary-fixed-dim": "#a1d494",
+                        "on-tertiary-container": "#4c3e00",
+                        "on-secondary-fixed-variant": "#683d0f",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "inverse-primary": "#a1d494",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "on-secondary-container": "#7a4b1e",
+                        "on-surface-variant": "#42493e",
+                        "on-primary-fixed": "#002201",
+                        "tertiary-fixed": "#ffe16d",
+                        "on-tertiary-fixed-variant": "#544600"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "xs": "8px",
+                        "xl": "64px",
+                        "sm": "16px",
+                        "margin": "32px",
+                        "lg": "40px",
+                        "md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "label-bold": ["Space Grotesk"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "pixel-code": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "800" }],
+                        "label-bold": ["14px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "500" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "pixel-code": ["12px", { "lineHeight": "1", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .voxel-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+        .voxel-shadow-lg {
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+        }
+        .voxel-inset {
+            box-shadow: inset 4px 4px 0px 0px rgba(0,0,0,0.1);
+        }
+        .voxel-active:active {
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            transform: translate(6px, 6px);
+        }
+        .voxel-active-sm:active {
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+            transform: translate(4px, 4px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md h-screen w-screen overflow-hidden flex flex-col relative selection:bg-tertiary-fixed selection:text-on-tertiary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-20 bg-white border-b-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<button class="flex items-center justify-center w-12 h-12 bg-white border-4 border-black voxel-shadow voxel-active-sm hover:bg-zinc-100 transition-all">
+<span class="material-symbols-outlined text-green-800" style="font-variation-settings: 'FILL' 1;">potted_plant</span>
+</button>
+<div class="text-2xl font-black text-black border-4 border-black px-3 py-1 bg-white font-['Plus_Jakarta_Sans'] uppercase tracking-tighter">
+            GROOTED
+        </div>
+<button class="flex items-center justify-center w-12 h-12 bg-white border-4 border-black voxel-shadow voxel-active-sm hover:bg-zinc-100 transition-all text-green-800">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</header>
+<!-- Main Map Canvas -->
+<main class="flex-grow relative mt-20 mb-24 overflow-hidden bg-[#e0f2fe]">
+<!-- Map Background (Simulated with image placeholder) -->
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="Vibrant isometric voxel art terrain map showing green farmlands, blocky trees, and distinct agricultural zones in bright daylight" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDRfbBDcwjMaEEndgOPxICCa3c5UDtTazwySr9nPVEFUnnIlOsStH_aIn2dYu76olGoRlvlpFo4_XOWHcapRgdb9Uz0hIdKOKwLQYtFZA8ayaqdXH9_ZVfaKW9iGQ3K6bhXXjskbE9pH7a9mrKFk5fKXZFZWRc6tBiuAxzul-5vEJXG3_u5ENSxM3-2aaNfkHFW9eJ8IXOnnKBi3PT_W_BER3vq-IYYQPNiQ6Lql26C9hHWV0knnAIySr3BJrJmJNeYfbuMElclQb_V');">
+<!-- Overlay to give it a slightly digital/blocky tint -->
+<div class="absolute inset-0 bg-[#e0f2fe] opacity-30 mix-blend-color"></div>
+<!-- YOUR ZONE Overlay -->
+<div class="absolute top-[30%] left-[20%] w-[40%] h-[30%] bg-primary-container/40 border-4 border-primary border-dashed flex items-center justify-center z-10">
+<div class="bg-primary text-on-primary font-label-bold text-label-bold px-sm py-xs border-2 border-black voxel-shadow transform -rotate-2">
+                    YOUR ZONE
+                </div>
+</div>
+<!-- Map Pins -->
+<div class="absolute top-[45%] left-[35%] z-20 flex flex-col items-center group cursor-pointer">
+<div class="bg-white border-4 border-black p-1 voxel-shadow mb-2 transform group-hover:-translate-y-2 transition-transform">
+<img alt="Jax Avatar" class="w-10 h-10 object-cover border-2 border-black" data-alt="Chunky 3D voxel avatar portrait of a cool character named Jax" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXZw6_iXDRZChfGZfMI2v-xifwDkqe_jlOzNdL3bJAqvzDpOkyDGSKMGTV_hBCddZLm30dRHF3ueSrQ81SJ5ueI6YHRc5uMSYy92jgRWpJ2HUQUIqGQlDpiP8Qq8p2YDzfJ2SDr65Yp9PB_wJcFQN4De-VvE0nkRxUXIm8Kh-yv1T9491QShzzFa8E9h4RBF8MDUBmzk1E9ZQPViFW_2eMEM0zvE1Vu0G6r2OK3hlw7GOW_tiP1QRctaFd82rPASr_lVJXO1ckdqGb"/>
+</div>
+<div class="bg-white border-2 border-black px-2 py-1 font-pixel-code text-pixel-code text-on-surface voxel-shadow">
+                    JAX
+                </div>
+</div>
+<div class="absolute top-[25%] left-[65%] z-20 flex flex-col items-center group cursor-pointer">
+<div class="bg-white border-4 border-black p-1 voxel-shadow mb-2 transform group-hover:-translate-y-2 transition-transform">
+<img alt="Oli Avatar" class="w-10 h-10 object-cover border-2 border-black" data-alt="Chunky 3D voxel avatar portrait of a playful character named Oli" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEPYs3TgQzoWmDQvckw4Canrrz7Vn_JF7-3PVehLTpsMmb93PViOn8MhcUPVF_n9bmnncqZ5T8bpiGQcfYwOADl1PfNiT2nfu6Ytn1Kffjk-0D4BY_fVlD9jVisbmyIBB-wB90jA8gJQheUwSBit_6nDoiaN6z2TR6LUrovbMKbB6ZAba4xKbnZCSiTYBbhqAX-0aTa0GB9fqZsoIuN9yqhZciopjfZOqGlybmlaU68IpsngBddPdjL-9ZTVFHXPP_Uyh0oOB-D4wH"/>
+</div>
+<div class="bg-white border-2 border-black px-2 py-1 font-pixel-code text-pixel-code text-on-surface voxel-shadow">
+                    OLI
+                </div>
+</div>
+<!-- Target Zone -->
+<div class="absolute top-[60%] left-[70%] z-10 w-16 h-16 border-4 border-tertiary-fixed rounded-full animate-pulse bg-tertiary-fixed/20 flex items-center justify-center">
+<div class="w-4 h-4 bg-tertiary-fixed border-2 border-black rounded-full"></div>
+</div>
+</div>
+<!-- Floating Map Controls -->
+<div class="absolute right-6 top-6 flex flex-col gap-xs z-30">
+<button class="w-12 h-12 bg-tertiary-fixed text-on-tertiary-fixed border-4 border-black voxel-shadow-lg voxel-active flex items-center justify-center hover:bg-tertiary-fixed-dim transition-colors">
+<span class="material-symbols-outlined font-bold text-xl">add</span>
+</button>
+<button class="w-12 h-12 bg-tertiary-fixed text-on-tertiary-fixed border-4 border-black voxel-shadow-lg voxel-active flex items-center justify-center hover:bg-tertiary-fixed-dim transition-colors">
+<span class="material-symbols-outlined font-bold text-xl">remove</span>
+</button>
+<button class="w-12 h-12 mt-md bg-white text-on-surface border-4 border-black voxel-shadow-lg voxel-active flex items-center justify-center hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined font-bold text-xl">my_location</span>
+</button>
+</div>
+<!-- Local Rivals Bento Panel -->
+<div class="absolute bottom-6 left-6 right-6 z-30">
+<div class="bg-surface border-4 border-black voxel-shadow-lg p-md relative max-w-2xl mx-auto w-full">
+<!-- Decorative Top Edge -->
+<div class="absolute -top-4 left-6 bg-secondary text-on-secondary px-sm py-xs border-4 border-black font-label-bold text-label-bold uppercase tracking-wide">
+                    Local Rivals
+                </div>
+<div class="mt-sm grid grid-cols-2 gap-md">
+<!-- Rank 1 -->
+<div class="bg-white border-4 border-black p-xs flex items-center gap-sm voxel-shadow group hover:bg-tertiary-fixed/10 transition-colors cursor-pointer">
+<div class="w-10 h-10 bg-tertiary-fixed border-2 border-black flex items-center justify-center font-headline-md text-headline-md text-on-tertiary-fixed">
+                            #1
+                        </div>
+<img alt="Jax Avatar" class="w-12 h-12 border-2 border-black object-cover" data-alt="Chunky 3D voxel avatar portrait of a cool character named Jax" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh3wLk2PgdYPc7njrrt6bwBO-5L04tpMsTd2wotcD7WJGuyHGFmIMTlkfdY3RwUstZ0zZRhLpafmNXB12cpY0rkITV0kdHX391qiT9ZGUzvizxaLRw80xQY7UnWp6zlC3lFJyP941qrxv_NzaW-UI7sOP8Ty8LFVwgucXr09zABO4YuL2S26a6BL-xUbqocCGsecXGcVVbc0fFpBHMejkRvCCudP87FxdLb_V0W4WWEmfEkH4BizyhTVDUn4v7myIE4EDq-bpGtGM-"/>
+<div class="flex-grow">
+<h3 class="font-label-bold text-label-bold text-on-surface uppercase">JAX</h3>
+<p class="font-pixel-code text-pixel-code text-outline mt-1">450 PTS</p>
+</div>
+</div>
+<!-- Rank 2 -->
+<div class="bg-white border-4 border-black p-xs flex items-center gap-sm voxel-shadow group hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="w-10 h-10 bg-surface-container-highest border-2 border-black flex items-center justify-center font-headline-md text-headline-md text-on-surface">
+                            #2
+                        </div>
+<img alt="Oli Avatar" class="w-12 h-12 border-2 border-black object-cover" data-alt="Chunky 3D voxel avatar portrait of a playful character named Oli" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo5RdoqWuNInu6HJKrF78VKELIgXMSgjUOSga1j1VrSlbRGbFmWhtBvg83aSB8yIIbs6eTlJgs9kdBaRbzC2vaV3B3M1B-lvMrZCUd4-ZQBF97MJ8ti4S2Ajq0-Js1JS1xCuySKc7QclfOu9w_i6roHj7E3pzlUXpUXvlYqoPbwrNyO4Ggz6kcvndygD1R2dNqiKBRLREkqBumZBcMtkFyLvHF3MTnFLUUN4eb3fdogfBykDZpKFuS5o-Tg35a8N1FpppMMGmKQMc3"/>
+<div class="flex-grow">
+<h3 class="font-label-bold text-label-bold text-on-surface uppercase">OLI</h3>
+<p class="font-pixel-code text-pixel-code text-outline mt-1">390 PTS</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-white h-24 px-4 pb-safe border-t-4 border-black shadow-[0_-4px_0px_0px_rgba(0,0,0,1)] md:hidden">
+<button class="flex flex-col items-center justify-center text-black border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-1 hover:bg-yellow-400 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined mb-1">potted_plant</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-bold uppercase">My Farm</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-green-500 text-black border-4 border-black shadow-none translate-y-1 px-4 py-1 hover:bg-yellow-400 transition-all">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-bold uppercase">Explore</span>
+</button>
+<button class="flex flex-col items-center justify-center text-black border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-1 hover:bg-yellow-400 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined mb-1">qr_code_scanner</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-bold uppercase">Scanner</span>
+</button>
+<button class="flex flex-col items-center justify-center text-black border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-1 hover:bg-yellow-400 active:shadow-none active:translate-x-1 active:translate-y-1 transition-all">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-bold uppercase">Profile</span>
+</button>
+</nav>
+<!-- Web Navigation (Hidden on Mobile, Visible on md+) -->
+<div class="hidden md:flex fixed top-0 right-24 h-20 items-center gap-md z-50">
+<a class="font-label-bold text-label-bold text-on-surface hover:bg-surface-container-highest px-sm py-xs border-2 border-transparent hover:border-black transition-all" href="#">MY FARM</a>
+<a class="font-label-bold text-label-bold text-primary-container bg-primary-fixed border-4 border-black px-sm py-xs voxel-shadow-lg transform -translate-y-1" href="#">EXPLORE</a>
+<a class="font-label-bold text-label-bold text-on-surface hover:bg-surface-container-highest px-sm py-xs border-2 border-transparent hover:border-black transition-all" href="#">SCANNER</a>
+<a class="font-label-bold text-label-bold text-on-surface hover:bg-surface-container-highest px-sm py-xs border-2 border-transparent hover:border-black transition-all" href="#">PROFILE</a>
+</div>
+</body></html>

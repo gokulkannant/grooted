@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GROOTED - Location Permission</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#dadada",
+                      "primary": "#154212",
+                      "surface-container-high": "#e8e8e8",
+                      "on-surface": "#1a1c1c",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-tint": "#3b6934",
+                      "surface-container-low": "#f3f3f3",
+                      "outline-variant": "#c2c9bb",
+                      "primary-container": "#2d5a27",
+                      "tertiary-fixed-dim": "#e9c400",
+                      "on-background": "#1a1c1c",
+                      "on-secondary-fixed": "#2e1500",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#683d0f",
+                      "inverse-primary": "#a1d494",
+                      "surface-bright": "#f9f9f9",
+                      "secondary-container": "#ffbf87",
+                      "inverse-surface": "#2f3131",
+                      "tertiary-fixed": "#ffe16d",
+                      "tertiary-container": "#c9a900",
+                      "surface-variant": "#e2e2e2",
+                      "on-error": "#ffffff",
+                      "on-secondary-container": "#7a4b1e",
+                      "on-surface-variant": "#42493e",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#f9ba82",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#835425",
+                      "inverse-on-surface": "#f1f1f1",
+                      "background": "#f9f9f9",
+                      "on-primary-fixed": "#002201",
+                      "surface-container-highest": "#e2e2e2",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#eeeeee",
+                      "surface-container-lowest": "#ffffff",
+                      "outline": "#72796e",
+                      "on-tertiary-fixed-variant": "#544600",
+                      "on-primary-container": "#9dd090",
+                      "tertiary": "#705d00",
+                      "primary-fixed-dim": "#a1d494",
+                      "surface": "#f9f9f9",
+                      "on-tertiary-fixed": "#221b00",
+                      "on-primary-fixed-variant": "#23501e",
+                      "primary-fixed": "#bcf0ae",
+                      "secondary-fixed": "#ffdcc1",
+                      "on-tertiary-container": "#4c3e00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "lg": "40px",
+                      "sm": "16px",
+                      "gutter": "24px",
+                      "xl": "64px",
+                      "md": "24px",
+                      "margin": "32px",
+                      "xs": "8px"
+              },
+              "fontFamily": {
+                      "label-bold": [
+                              "Space Grotesk"
+                      ],
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "pixel-code": [
+                              "Space Grotesk"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-xl": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "pixel-code": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "800"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-dim text-on-surface flex flex-col items-center justify-center min-h-screen p-margin font-body-md antialiased overflow-x-hidden">
+<!-- Main Content Canvas (No Nav Shell due to Linear Onboarding Intent) -->
+<main class="w-full max-w-[480px] bg-surface-container-lowest border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-xl flex flex-col p-lg gap-lg relative">
+<!-- Header / Illustration Section -->
+<div class="flex flex-col gap-md">
+<div class="w-full h-[240px] border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg overflow-hidden bg-primary-fixed relative">
+<!-- Voxel Illustration -->
+<img alt="Voxel Map Illustration" class="w-full h-full object-cover" data-alt="isometric 3d voxel art style map illustration with a prominent glowing red location pin dropping onto a stylized city block, bright daylight, chunky geometry, playful aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmIJlTBvBqv5DStwCBtaIfpHfmNEITe8uyK9V2gU3yLb_GfJX3K0r8i0qrJPVtDx_N3rsvxvnVbmge3ORWqxlW1AMJIeJYAwm04Y4nvzPOJaUHgkioNfutO_W2_S6uHTIlTVvbfZUqbd-l1YaMMKxufJs5J8y0x7Csovh3qvGQuj5Bx9UkgTSi9oJJBG6bzUoKazzM_SFOPi7pxGqDrzGiWS4Yz6g3HPRvdLSGeAgc9Cl0Otf3_aRxIv07yqlMzM763ZYB5Z82pfjw"/>
+</div>
+<!-- Typography Content -->
+<div class="flex flex-col items-center text-center gap-xs px-sm">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Join the Community</h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    We use your approximate location to assign you to a local zone, unlock regional challenges, and place you on nearby leaderboards.
+                </p>
+</div>
+</div>
+<!-- Reassurance Block -->
+<div class="flex justify-center">
+<div class="inline-flex items-center gap-xs bg-tertiary-container border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-md px-sm py-xs">
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px]" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-pixel-code text-pixel-code text-on-tertiary-container uppercase tracking-wide">Exact home locations remain hidden</span>
+</div>
+</div>
+<!-- Action Area (Tactile Buttons) -->
+<div class="flex flex-col gap-sm pt-sm">
+<button class="w-full bg-primary-container text-on-primary-container border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-lg py-sm px-md flex items-center justify-center gap-sm active:translate-y-[8px] active:translate-x-[8px] active:shadow-none transition-all duration-75">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">my_location</span>
+<span class="font-label-bold text-label-bold uppercase tracking-widest">Allow Location</span>
+</button>
+<button class="w-full bg-surface-container-highest text-on-surface-variant border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg py-sm px-md flex items-center justify-center active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all duration-75">
+<span class="font-label-bold text-label-bold uppercase tracking-widest">Skip</span>
+</button>
+</div>
+</main>
+</body></html>

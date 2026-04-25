@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Grooted - Explore Zones</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#cca730",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-error-container": "#93000a",
+                        "background": "#fcf9f2",
+                        "on-secondary-container": "#795b36",
+                        "secondary-container": "#ffd6a8",
+                        "on-primary-fixed": "#002201",
+                        "on-background": "#1c1c18",
+                        "on-surface": "#1c1c18",
+                        "secondary": "#765934",
+                        "on-surface-variant": "#42493e",
+                        "tertiary-fixed": "#ffe088",
+                        "primary-fixed": "#bcf0ae",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#ffddb7",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fcf9f2",
+                        "surface-container": "#f1eee7",
+                        "surface-tint": "#3b6934",
+                        "on-tertiary-container": "#4f3d00",
+                        "inverse-primary": "#a1d494",
+                        "outline": "#72796e",
+                        "primary-fixed-dim": "#a1d494",
+                        "on-primary-container": "#9dd090",
+                        "inverse-surface": "#31312c",
+                        "inverse-on-surface": "#f3f0e9",
+                        "surface-container-low": "#f6f3ec",
+                        "outline-variant": "#c2c9bb",
+                        "on-secondary-fixed-variant": "#5c421f",
+                        "surface-dim": "#dcdad3",
+                        "on-secondary-fixed": "#2a1700",
+                        "surface-variant": "#e5e2db",
+                        "primary-container": "#2d5a27",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ebe8e1",
+                        "surface": "#fcf9f2",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#e9c349",
+                        "primary": "#154212",
+                        "secondary-fixed-dim": "#e7c093",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e5e2db",
+                        "tertiary": "#735c00",
+                        "on-tertiary-fixed-variant": "#574500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xl": "48px",
+                        "gutter": "12px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "edge_margin": "20px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "800"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .voxel-grid {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(28, 28, 24, 0.1) 2px, transparent 2px),
+                linear-gradient(to bottom, rgba(28, 28, 24, 0.1) 2px, transparent 2px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen pt-16 pb-24 selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 flex justify-between items-center w-full px-4 h-16 z-50 bg-stone-50 dark:bg-stone-950 docked full-width top-0 border-b-4 border-[#1A1A1A] shadow-[0px_4px_0px_0px_rgba(26,26,26,0.1)]">
+<button class="flex items-center justify-center p-sm hover:bg-stone-200 dark:hover:bg-stone-800 transition-all active:translate-y-1 active:shadow-none transition-all duration-75 text-[#2D5A27] dark:text-[#4ADE80]">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">menu</span>
+</button>
+<div class="text-2xl font-black text-[#1A1A1A] dark:text-white border-2 border-[#1A1A1A] px-3 py-1 bg-white dark:bg-stone-800 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] font-['Plus_Jakarta_Sans'] font-black uppercase tracking-tighter">
+            GROOTED
+        </div>
+<button class="flex items-center justify-center p-sm hover:bg-stone-200 dark:hover:bg-stone-800 transition-all active:translate-y-1 active:shadow-none transition-all duration-75 text-[#2D5A27] dark:text-[#4ADE80]">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">redeem</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-3xl mx-auto px-edge_margin py-xl flex flex-col gap-xl">
+<!-- Map Section -->
+<section class="flex flex-col gap-sm">
+<div class="flex justify-between items-end">
+<h1 class="font-headline-md text-headline-md text-on-surface">Zone Map</h1>
+<span class="font-label-caps text-label-caps text-primary bg-primary-fixed px-sm py-xs border-2 border-on-surface shadow-[2px_2px_0px_0px_#1c1c18]">LIVE</span>
+</div>
+<!-- Voxel Map Container -->
+<div class="relative w-full h-[530px] border-[4px] border-on-surface bg-surface-container rounded-none shadow-[6px_6px_0px_0px_#1c1c18] overflow-hidden">
+<!-- Stylized Base Map Image -->
+<div class="absolute inset-0 bg-cover bg-center opacity-80 mix-blend-multiply" data-alt="Top down aerial view of blocky farm fields in varying shades of green and brown resembling a voxel game landscape" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCOa_2iETnziYtBRIMSLyyAOHOp5P1s95UYfnYpwiPKUtF9ta0xf9b7u6N_UtfpO6VQc8M7FJDsaBLK44aS2XGHOe1h9ZbhfWALzklK-GCI1dIVwFRfL4xdbEnHJsipbCex9x_ahlQGj4UGO01n3BA1CjruRtNiNX-1MJhuuzwMNHPhGRKbe3hgT87IkwDhkLW0LdbQL7VTfJEs7e1bsFIG99-dGsGqJLGJasl33F1c8ENVAsqh3ClqMnlhpAPWntYaiBJT0GlqRYjj');">
+</div>
+<!-- Grid Overlay for Voxel Feel -->
+<div class="absolute inset-0 voxel-grid pointer-events-none"></div>
+<!-- User Influence Zone (Highlighted Block) -->
+<div class="absolute top-[20%] left-[30%] w-[128px] h-[96px] bg-primary/20 border-[3px] border-primary-container shadow-[inset_0_0_0_4px_rgba(45,90,39,0.4)] backdrop-blur-[2px] flex items-center justify-center z-10 animate-pulse">
+<span class="font-label-caps text-label-caps text-on-primary bg-primary border-2 border-on-surface px-sm py-xs shadow-[2px_2px_0px_0px_#1c1c18]">YOUR ZONE</span>
+</div>
+<!-- Nearby Farm Zone 1 -->
+<div class="absolute bottom-[30%] right-[20%] w-[96px] h-[96px] bg-secondary-fixed/50 border-[2px] border-on-surface flex items-center justify-center z-10">
+</div>
+<!-- Nearby Farm Zone 2 -->
+<div class="absolute top-[10%] right-[10%] w-[64px] h-[128px] bg-tertiary-fixed/50 border-[2px] border-on-surface flex items-center justify-center z-10">
+</div>
+<!-- Farmer Avatars (Pixel style markers) -->
+<div class="absolute top-[40%] left-[50%] flex flex-col items-center gap-xs z-20">
+<div class="w-8 h-8 bg-tertiary-container border-[3px] border-on-surface shadow-[3px_3px_0px_0px_#1c1c18] flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-surface">person</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface bg-surface border border-on-surface px-xs">Jax</span>
+</div>
+<div class="absolute bottom-[20%] left-[20%] flex flex-col items-center gap-xs z-20">
+<div class="w-8 h-8 bg-primary-fixed border-[3px] border-on-surface shadow-[3px_3px_0px_0px_#1c1c18] flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-surface">person</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface bg-surface border border-on-surface px-xs">Oli</span>
+</div>
+<!-- Map Controls (Tactile Buttons) -->
+<div class="absolute bottom-md right-md flex flex-col gap-sm z-30">
+<button class="w-12 h-12 bg-surface border-[3px] border-on-surface shadow-[4px_4px_0px_0px_#1c1c18] flex items-center justify-center hover:bg-surface-variant active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_0px_#1c1c18] transition-all">
+<span class="material-symbols-outlined text-on-surface">add</span>
+</button>
+<button class="w-12 h-12 bg-surface border-[3px] border-on-surface shadow-[4px_4px_0px_0px_#1c1c18] flex items-center justify-center hover:bg-surface-variant active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_0px_#1c1c18] transition-all">
+<span class="material-symbols-outlined text-on-surface">remove</span>
+</button>
+<button class="w-12 h-12 mt-sm bg-primary-container border-[3px] border-on-surface shadow-[4px_4px_0px_0px_#1c1c18] flex items-center justify-center hover:bg-primary active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_0px_#1c1c18] transition-all">
+<span class="material-symbols-outlined text-on-primary">my_location</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Local Leaderboard Preview -->
+<section class="flex flex-col gap-md">
+<h2 class="font-title-sm text-title-sm text-on-surface border-b-[3px] border-on-surface pb-sm inline-block self-start">Local Rivals</h2>
+<div class="flex flex-col gap-sm">
+<!-- Leaderboard Item 1 -->
+<div class="flex items-center gap-md p-sm border-[3px] border-on-surface bg-surface shadow-[4px_4px_0px_0px_#1c1c18]">
+<div class="w-12 h-12 bg-tertiary-fixed border-[2px] border-on-surface flex items-center justify-center font-title-sm text-title-sm text-on-surface shadow-[inset_-2px_-2px_0px_0px_rgba(28,28,24,0.2)]">
+                        #1
+                    </div>
+<div class="w-12 h-12 bg-surface-variant border-[2px] border-on-surface overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover grayscale blocky-filter" data-alt="Close up portrait of a young woman with short hair styled in a low-fi pixel art aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcgbVydeo2zCbIntQ12Ssroohf_xs5f8XSO33TrLmta4mKRGxzW-VgZ7p4v8JNTy6U52SifVAaMli2Ggw5nUfeM-pSgGsZKnIMLhsmAzaptEw405_EhSR93_UcL5S_xD8frtPP9eWT8R8SIQFss7O77CnEz8oYWaC3gOSTd7A5KU_6eA9_4G3fEX2UMfPbAOSujiysV2erjtf0XxdiLUwckkCSN4CGn7li_X6QoSpiMNhougdK90Q3KSTY96Cgcz1TTTZEpEL9dpGp"/>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface leading-tight">Sarah J.</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">4,200 EXP</span>
+</div>
+<button class="px-md py-sm bg-secondary-container border-[2px] border-on-surface shadow-[2px_2px_0px_0px_#1c1c18] font-label-caps text-label-caps text-on-surface active:translate-y-[2px] active:translate-x-[2px] active:shadow-none hover:bg-secondary-fixed transition-all">
+                        VIEW
+                    </button>
+</div>
+<!-- Leaderboard Item 2 (User) -->
+<div class="flex items-center gap-md p-sm border-[3px] border-primary bg-primary-fixed/20 shadow-[4px_4px_0px_0px_#1c1c18]">
+<div class="w-12 h-12 bg-primary-container border-[2px] border-on-surface flex items-center justify-center font-title-sm text-title-sm text-on-primary shadow-[inset_-2px_-2px_0px_0px_rgba(28,28,24,0.4)]">
+                        #2
+                    </div>
+<div class="w-12 h-12 bg-surface-variant border-[2px] border-on-surface overflow-hidden">
+<div class="w-full h-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">face</span>
+</div>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="font-title-sm text-title-sm text-on-surface leading-tight">You</span>
+<span class="font-label-caps text-label-caps text-primary">3,850 EXP</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-end pb-4 pt-2 px-2 bg-white dark:bg-stone-900 h-24 border-t-4 border-[#1A1A1A] rounded-t-none shadow-[0px_-4px_0px_0px_rgba(26,26,26,0.1)]">
+<!-- Tab 1: My Farm (Inactive) -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] dark:text-stone-400 px-4 py-2 opacity-70 hover:bg-stone-100 dark:hover:bg-stone-800 active:translate-y-0 active:shadow-none transition-transform duration-75">
+<span class="material-symbols-outlined mb-1">potted_plant</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase">My Farm</span>
+</button>
+<!-- Tab 2: Explore (Active) -->
+<button class="flex flex-col items-center justify-center bg-[#2D5A27] text-white rounded-none border-2 border-[#1A1A1A] translate-y-[-4px] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] px-4 py-2 hover:bg-stone-100 dark:hover:bg-stone-800 active:translate-y-0 active:shadow-none transition-transform duration-75">
+<span class="material-symbols-outlined mb-1">map</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase">Explore</span>
+</button>
+<!-- Tab 3: Scanner (Inactive) -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] dark:text-stone-400 px-4 py-2 opacity-70 hover:bg-stone-100 dark:hover:bg-stone-800 active:translate-y-0 active:shadow-none transition-transform duration-75">
+<span class="material-symbols-outlined mb-1">barcode_scanner</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase">Scanner</span>
+</button>
+<!-- Tab 4: Ranger (Inactive) -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] dark:text-stone-400 px-4 py-2 opacity-70 hover:bg-stone-100 dark:hover:bg-stone-800 active:translate-y-0 active:shadow-none transition-transform duration-75">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase">Ranger</span>
+</button>
+</nav>
+</body></html>

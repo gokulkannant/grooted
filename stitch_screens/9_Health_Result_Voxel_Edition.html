@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Plant Health Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#cca730",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-error-container": "#93000a",
+                        "background": "#fcf9f2",
+                        "on-secondary-container": "#795b36",
+                        "secondary-container": "#ffd6a8",
+                        "on-primary-fixed": "#002201",
+                        "on-background": "#1c1c18",
+                        "on-surface": "#1c1c18",
+                        "secondary": "#765934",
+                        "on-surface-variant": "#42493e",
+                        "tertiary-fixed": "#ffe088",
+                        "primary-fixed": "#bcf0ae",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#ffddb7",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fcf9f2",
+                        "surface-container": "#f1eee7",
+                        "surface-tint": "#3b6934",
+                        "on-tertiary-container": "#4f3d00",
+                        "inverse-primary": "#a1d494",
+                        "outline": "#72796e",
+                        "primary-fixed-dim": "#a1d494",
+                        "on-primary-container": "#9dd090",
+                        "inverse-surface": "#31312c",
+                        "inverse-on-surface": "#f3f0e9",
+                        "surface-container-low": "#f6f3ec",
+                        "outline-variant": "#c2c9bb",
+                        "on-secondary-fixed-variant": "#5c421f",
+                        "surface-dim": "#dcdad3",
+                        "on-secondary-fixed": "#2a1700",
+                        "surface-variant": "#e5e2db",
+                        "primary-container": "#2d5a27",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ebe8e1",
+                        "surface": "#fcf9f2",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#e9c349",
+                        "primary": "#154212",
+                        "secondary-fixed-dim": "#e7c093",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e5e2db",
+                        "tertiary": "#735c00",
+                        "on-tertiary-fixed-variant": "#574500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xl": "48px",
+                        "gutter": "12px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "edge_margin": "20px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Base brutalist resets */
+        * { border-color: #1A1A1A; }
+        body { background-color: #fcf9f2; color: #1c1c18; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-4 h-16 z-50 bg-stone-50 dark:bg-stone-950 docked full-width top-0 border-b-4 border-[#1A1A1A] shadow-[0px_4px_0px_0px_rgba(26,26,26,0.1)] fixed">
+<button class="w-10 h-10 flex items-center justify-center hover:bg-stone-200 dark:hover:bg-stone-800 transition-all active:translate-y-1 active:shadow-none duration-75 text-stone-500">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-['Plus_Jakarta_Sans'] font-black uppercase tracking-tighter text-[#2D5A27] dark:text-[#4ADE80]">
+<span class="text-2xl font-black text-[#1A1A1A] dark:text-white border-2 border-[#1A1A1A] px-3 py-1 bg-white dark:bg-stone-800 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">
+                GROOTED
+            </span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-stone-200 dark:hover:bg-stone-800 transition-all active:translate-y-1 active:shadow-none duration-75 text-stone-500">
+<span class="material-symbols-outlined">redeem</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 px-edge_margin max-w-md mx-auto space-y-xl">
+<!-- Subject Header -->
+<section class="text-center space-y-xs">
+<h1 class="font-headline-md text-headline-md text-on-surface">Monstera Deliciosa</h1>
+<p class="font-body-md text-body-md text-outline">Scan Result ID: #88A2V</p>
+</section>
+<!-- Hero Metric: Voxel Flower Score -->
+<section class="flex flex-col items-center justify-center py-sm">
+<!-- Voxel Shape Assembly -->
+<div class="relative w-40 h-40 flex items-center justify-center mb-md">
+<!-- Top Petal -->
+<div class="absolute top-0 w-16 h-16 bg-secondary-fixed border-4 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] z-0"></div>
+<!-- Bottom Petal -->
+<div class="absolute bottom-0 w-16 h-16 bg-secondary-fixed border-4 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] z-0"></div>
+<!-- Left Petal -->
+<div class="absolute left-0 w-16 h-16 bg-secondary-fixed border-4 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] z-0"></div>
+<!-- Right Petal -->
+<div class="absolute right-0 w-16 h-16 bg-secondary-fixed border-4 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] z-0"></div>
+<!-- Center Core (Score) -->
+<div class="relative z-10 w-24 h-24 bg-primary-fixed border-4 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] flex items-center justify-center">
+<span class="font-display-lg text-display-lg font-black text-on-primary-fixed-variant">82</span>
+</div>
+</div>
+<!-- Status Badge -->
+<div class="inline-flex items-center gap-sm px-md py-sm bg-primary-container border-4 border-[#1A1A1A] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">
+<span class="material-symbols-outlined text-on-primary">verified</span>
+<span class="font-title-sm text-title-sm text-on-primary uppercase tracking-wide">Thriving</span>
+</div>
+</section>
+<!-- Vitals Grid (Bento Style) -->
+<section class="grid grid-cols-2 gap-md">
+<!-- Vital Card: Moisture -->
+<div class="bg-surface-container border-4 border-[#1A1A1A] p-md shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] flex flex-col gap-sm">
+<div class="w-10 h-10 bg-secondary-container border-2 border-[#1A1A1A] flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]">
+<span class="material-symbols-outlined text-on-secondary-container">water_drop</span>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-outline uppercase">Soil Moisture</h3>
+<p class="font-title-sm text-title-sm text-on-surface">Optimal</p>
+</div>
+</div>
+<!-- Vital Card: Light -->
+<div class="bg-surface-container border-4 border-[#1A1A1A] p-md shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] flex flex-col gap-sm">
+<div class="w-10 h-10 bg-tertiary-fixed border-2 border-[#1A1A1A] flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]">
+<span class="material-symbols-outlined text-on-tertiary-fixed">light_mode</span>
+</div>
+<div>
+<h3 class="font-label-caps text-label-caps text-outline uppercase">Light Exposure</h3>
+<p class="font-title-sm text-title-sm text-on-surface">Indirect High</p>
+</div>
+</div>
+</section>
+<!-- Advice Section -->
+<section class="space-y-md">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+<span class="w-4 h-8 bg-tertiary-container border-2 border-[#1A1A1A] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] block"></span>
+                Actionable Advice
+            </h2>
+<!-- Advice Card -->
+<div class="bg-surface-bright border-4 border-[#1A1A1A] p-md shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] relative overflow-hidden">
+<div class="absolute right-[-10px] top-[-10px] w-12 h-12 bg-secondary-fixed border-4 border-[#1A1A1A] rotate-12"></div>
+<h3 class="font-title-sm text-title-sm text-on-surface relative z-10">Wipe Leaves Down</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-sm relative z-10">Dust is accumulating on the broad leaves, reducing photosynthesis efficiency. Use a damp cloth to gently wipe them.</p>
+</div>
+</section>
+<!-- Primary Action -->
+<section class="pt-sm pb-xl">
+<button class="w-full bg-tertiary-container text-on-tertiary-container border-4 border-[#1A1A1A] py-lg flex items-center justify-center gap-md shadow-[0px_8px_0px_0px_rgba(26,26,26,1)] active:translate-y-[8px] active:shadow-none transition-all duration-100 ease-in-out">
+<span class="font-title-sm text-title-sm uppercase tracking-widest font-black">Log Care Task</span>
+<span class="material-symbols-outlined font-black">edit_document</span>
+</button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-end pb-4 pt-2 px-2 bg-white dark:bg-stone-900 h-24 border-t-4 border-[#1A1A1A] rounded-t-none shadow-[0px_-4px_0px_0px_rgba(26,26,26,0.1)] font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase">
+<!-- Inactive: My Farm -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] dark:text-stone-400 px-4 py-2 opacity-70 hover:bg-stone-100 dark:hover:bg-stone-800 active:translate-y-0 active:shadow-none transition-transform duration-75 w-full">
+<span class="material-symbols-outlined mb-1">potted_plant</span>
+<span>My Farm</span>
+</button>
+<!-- Inactive: Explore -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] dark:text-stone-400 px-4 py-2 opacity-70 hover:bg-stone-100 dark:hover:bg-stone-800 active:translate-y-0 active:shadow-none transition-transform duration-75 w-full">
+<span class="material-symbols-outlined mb-1">map</span>
+<span>Explore</span>
+</button>
+<!-- Active: Scanner -->
+<button class="flex flex-col items-center justify-center bg-[#2D5A27] text-white rounded-none border-2 border-[#1A1A1A] translate-y-[-4px] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] px-4 py-2 hover:bg-stone-100 dark:hover:bg-stone-800 active:translate-y-0 active:shadow-none transition-transform duration-75 w-full">
+<span class="material-symbols-outlined mb-1">barcode_scanner</span>
+<span>Scanner</span>
+</button>
+<!-- Inactive: Ranger -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] dark:text-stone-400 px-4 py-2 opacity-70 hover:bg-stone-100 dark:hover:bg-stone-800 active:translate-y-0 active:shadow-none transition-transform duration-75 w-full">
+<span class="material-symbols-outlined mb-1">person</span>
+<span>Ranger</span>
+</button>
+</nav>
+</body></html>

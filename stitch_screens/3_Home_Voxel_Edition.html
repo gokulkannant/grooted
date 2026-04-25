@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GROOTED - Home Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#cca730",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-error-container": "#93000a",
+                        "background": "#fcf9f2",
+                        "on-secondary-container": "#795b36",
+                        "secondary-container": "#ffd6a8",
+                        "on-primary-fixed": "#002201",
+                        "on-background": "#1c1c18",
+                        "on-surface": "#1c1c18",
+                        "secondary": "#765934",
+                        "on-surface-variant": "#42493e",
+                        "tertiary-fixed": "#ffe088",
+                        "primary-fixed": "#bcf0ae",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#ffddb7",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#fcf9f2",
+                        "surface-container": "#f1eee7",
+                        "surface-tint": "#3b6934",
+                        "on-tertiary-container": "#4f3d00",
+                        "inverse-primary": "#a1d494",
+                        "outline": "#72796e",
+                        "primary-fixed-dim": "#a1d494",
+                        "on-primary-container": "#9dd090",
+                        "inverse-surface": "#31312c",
+                        "inverse-on-surface": "#f3f0e9",
+                        "surface-container-low": "#f6f3ec",
+                        "outline-variant": "#c2c9bb",
+                        "on-secondary-fixed-variant": "#5c421f",
+                        "surface-dim": "#dcdad3",
+                        "on-secondary-fixed": "#2a1700",
+                        "surface-variant": "#e5e2db",
+                        "primary-container": "#2d5a27",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ebe8e1",
+                        "surface": "#fcf9f2",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#e9c349",
+                        "primary": "#154212",
+                        "secondary-fixed-dim": "#e7c093",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e5e2db",
+                        "tertiary": "#735c00",
+                        "on-tertiary-fixed-variant": "#574500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xl": "48px",
+                        "gutter": "12px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "edge_margin": "20px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "800"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed min-h-screen flex flex-col">
+<!-- TopAppBar JSON INJECTION -->
+<header class="flex justify-between items-center w-full px-4 h-16 z-50 bg-stone-50 border-b-4 border-[#1A1A1A] shadow-[0px_4px_0px_0px_rgba(26,26,26,0.1)] fixed top-0 left-0">
+<button class="text-[#2D5A27] hover:bg-stone-200 transition-all p-2 rounded-DEFAULT active:translate-y-1 active:shadow-none duration-75 flex items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-['Plus_Jakarta_Sans'] font-black uppercase tracking-tighter text-2xl text-[#1A1A1A] border-2 border-[#1A1A1A] px-3 py-1 bg-white shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">
+            GROOTED
+        </div>
+<button class="text-[#2D5A27] hover:bg-stone-200 transition-all p-2 rounded-DEFAULT active:translate-y-1 active:shadow-none duration-75 flex items-center justify-center">
+<span class="material-symbols-outlined">redeem</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 pt-[88px] pb-[120px] px-md flex flex-col gap-lg max-w-md mx-auto w-full">
+<!-- Stats Row -->
+<section class="flex justify-between items-center gap-sm">
+<div class="bg-tertiary-fixed border-2 border-on-background shadow-[4px_4px_0px_0px_#1c1c18] rounded-DEFAULT px-md py-sm flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-tertiary-fixed text-[20px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-label-caps text-label-caps text-on-tertiary-fixed">Day 14</span>
+</div>
+<div class="bg-primary-fixed border-2 border-on-background shadow-[4px_4px_0px_0px_#1c1c18] rounded-full px-md py-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-primary-fixed text-[20px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="font-label-caps text-label-caps text-on-primary-fixed">1,240 Farm Points</span>
+</div>
+</section>
+<!-- Main Plant Card -->
+<section class="border-2 border-on-background bg-surface-container shadow-[6px_6px_0px_0px_#1c1c18] rounded-xl overflow-hidden flex flex-col">
+<div class="h-[200px] w-full border-b-2 border-on-background bg-surface-bright relative">
+<img class="w-full h-full object-cover pixelated" data-alt="Voxel style digital illustration of a vibrant giant yellow sunflower in a blocky terracotta pot against a clear blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk6egrCt0pc6eit1UOTS8-tIcay8xWCfgOYzetwgX7Lz53qIaWN2hDPqUZ2HN2WeVDOLFrN9w0zUo3EgZ3MGT8rWBbw2QQoOe-ntAxo-tCqI_zZYvLKyDmc9KzMLonMDZUSF1glRPGC1gRJEbQGTPt-HJ_7wBLCY26KIm5VKBOfVJglbakFzX4mW88dAqDucphT0u5taaMZSQpoFuoCPL64IVmlHZ5FlYcUUFj6FXQdJdK4qIQu_8vQrJpEUwQuhWLZOB_MMGunjbH" style="image-rendering: pixelated;"/>
+<div class="absolute top-sm right-sm bg-secondary-container border-2 border-on-background shadow-[2px_2px_0px_0px_#1c1c18] rounded-DEFAULT px-sm py-xs font-label-caps text-label-caps text-on-secondary-container">
+                    LVL 5
+                </div>
+</div>
+<div class="p-md flex flex-col gap-sm bg-surface-container-low">
+<div class="flex justify-between items-end">
+<h2 class="font-headline-md text-headline-md text-on-surface">Giant Sunflower</h2>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Growing...</span>
+</div>
+<!-- Voxel Progress Bar -->
+<div class="h-6 w-full border-2 border-on-background bg-surface-variant shadow-[inset_2px_2px_0px_0px_rgba(28,28,24,0.3)] flex mt-xs">
+<div class="w-1/4 h-full bg-primary border-r-2 border-on-background"></div>
+<div class="w-1/4 h-full bg-primary border-r-2 border-on-background"></div>
+<div class="w-1/4 h-full bg-primary border-r-2 border-on-background"></div>
+<div class="w-1/4 h-full"></div>
+</div>
+</div>
+</section>
+<!-- Primary Action -->
+<button class="w-full bg-primary text-on-primary border-2 border-on-background shadow-[4px_6px_0px_0px_#1c1c18] rounded-lg py-md px-lg flex items-center justify-center gap-md active:translate-y-[4px] active:shadow-[0px_2px_0px_0px_#1c1c18] transition-all duration-75">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">barcode_scanner</span>
+<span class="font-title-sm text-title-sm uppercase tracking-wider">Quick Scan</span>
+</button>
+<!-- Tasks List -->
+<section class="flex flex-col gap-sm mt-sm">
+<h3 class="font-title-sm text-title-sm text-on-surface mb-xs">Today's Tasks</h3>
+<!-- Task 1 (Completed) -->
+<div class="border-2 border-on-background bg-surface-container-highest shadow-[4px_4px_0px_0px_#1c1c18] rounded-lg p-md flex items-center justify-between opacity-80">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 border-2 border-on-background rounded-DEFAULT bg-primary-fixed shadow-[2px_2px_0px_0px_#1c1c18] flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface line-through decoration-2">Water</span>
+</div>
+</div>
+<!-- Task 2 (Pending) -->
+<div class="border-2 border-on-background bg-surface shadow-[4px_4px_0px_0px_#1c1c18] rounded-lg p-md flex items-center justify-between active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#1c1c18] transition-all cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 border-2 border-on-background rounded-DEFAULT bg-surface-container shadow-[2px_2px_0px_0px_#1c1c18] flex items-center justify-center">
+<!-- Empty box -->
+</div>
+<span class="font-body-md text-body-md text-on-surface font-bold">Scan Area</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">arrow_forward</span>
+</div>
+<!-- Task 3 (Pending) -->
+<div class="border-2 border-on-background bg-surface shadow-[4px_4px_0px_0px_#1c1c18] rounded-lg p-md flex items-center justify-between active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#1c1c18] transition-all cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 border-2 border-on-background rounded-DEFAULT bg-surface-container shadow-[2px_2px_0px_0px_#1c1c18] flex items-center justify-center">
+<!-- Empty box -->
+</div>
+<span class="font-body-md text-body-md text-on-surface font-bold">Rotate Pot 180°</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">arrow_forward</span>
+</div>
+</section>
+</main>
+<!-- BottomNavBar JSON INJECTION -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-end pb-4 pt-2 px-2 bg-white h-24 border-t-4 border-[#1A1A1A] rounded-t-none shadow-[0px_-4px_0px_0px_rgba(26,26,26,0.1)]">
+<!-- Active Tab: My Farm -->
+<button class="flex flex-col items-center justify-center bg-[#2D5A27] text-white rounded-none border-2 border-[#1A1A1A] translate-y-[-4px] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] px-4 py-2 hover:bg-stone-100 active:translate-y-0 active:shadow-none transition-transform duration-75">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">potted_plant</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase mt-1">My Farm</span>
+</button>
+<!-- Inactive Tab: Explore -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] px-4 py-2 opacity-70 hover:bg-stone-100 active:translate-y-0 active:shadow-none transition-transform duration-75">
+<span class="material-symbols-outlined">map</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase mt-1">Explore</span>
+</button>
+<!-- Inactive Tab: Scanner -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] px-4 py-2 opacity-70 hover:bg-stone-100 active:translate-y-0 active:shadow-none transition-transform duration-75">
+<span class="material-symbols-outlined">barcode_scanner</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase mt-1">Scanner</span>
+</button>
+<!-- Inactive Tab: Ranger -->
+<button class="flex flex-col items-center justify-center text-[#1A1A1A] px-4 py-2 opacity-70 hover:bg-stone-100 active:translate-y-0 active:shadow-none transition-transform duration-75">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase mt-1">Ranger</span>
+</button>
+</nav>
+</body></html>
