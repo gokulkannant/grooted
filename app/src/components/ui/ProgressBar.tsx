@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, type ViewStyle } from "react-native";
 import { colors } from "@/constants/colors";
 import { radius } from "@/constants/layout";
 
@@ -16,14 +16,16 @@ export function ProgressBar({ value }: ProgressBarProps) {
 
 const styles = StyleSheet.create({
   fill: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryFixed,
     borderRadius: radius.full,
     height: "100%",
-  },
+  } as ViewStyle,
   track: {
-    backgroundColor: "rgba(232,245,233,0.12)",
+    backgroundColor: colors.surfaceVariant,
+    borderColor: colors.border,
+    borderWidth: 2,
     borderRadius: radius.full,
-    height: 8,
+    height: 16,
     overflow: "hidden",
-  },
+  } as ViewStyle,
 });

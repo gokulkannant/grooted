@@ -17,7 +17,7 @@ export function EmptyState({ title, body }: EmptyStateProps) {
 }
 
 const styles = StyleSheet.create({
-  body: { color: "rgba(232,245,233,0.72)", textAlign: "center" },
+  body: { color: colors.onSurfaceVariant, textAlign: "center" },
   container: { alignItems: "center", gap: spacing.sm, padding: spacing.lg },
-  title: { color: colors.text, fontSize: 20, fontWeight: "800", textAlign: "center" },
+  title: { color: colors.onSurface, fontSize: 20, fontWeight: "800", textAlign: "center" },
 });

@@ -14,6 +14,6 @@ export function GreenZoneMarker({ label }: GreenZoneMarkerProps) {
 }
 
 const styles = StyleSheet.create({
-  marker: { backgroundColor: colors.primaryDark, borderRadius: 8, padding: 8 },
-  text: { color: colors.text, fontWeight: "800" },
+  marker: { backgroundColor: colors.primaryContainer, borderRadius: 8, borderWidth: 3, borderColor: colors.border, padding: 8 },
+  text: { color: colors.onPrimaryContainer, fontWeight: "800" },
 });

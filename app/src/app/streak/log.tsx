@@ -28,6 +28,6 @@ export default function StreakLogScreen() {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: colors.background, flex: 1, gap: spacing.md, padding: spacing.lg },
-  copy: { color: "rgba(232,245,233,0.72)", fontSize: 16 },
-  title: { color: colors.text, fontSize: 28, fontWeight: "900" },
+  copy: { color: colors.onSurfaceVariant, fontSize: 16 },
+  title: { color: colors.onSurface, fontSize: 28, fontWeight: "900" },
 });

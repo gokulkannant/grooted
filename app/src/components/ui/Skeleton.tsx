@@ -11,7 +11,7 @@ export function Skeleton({ height = 16, width = "100%" }: SkeletonProps) {
 
 const styles = StyleSheet.create({
   skeleton: {
-    backgroundColor: "rgba(232,245,233,0.12)",
+    backgroundColor: colors.surfaceContainerHigh,
     borderRadius: 8,
   },
 });

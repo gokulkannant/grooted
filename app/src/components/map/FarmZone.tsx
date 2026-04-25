@@ -16,7 +16,7 @@ export function FarmZone({ zone }: FarmZoneProps) {
 }
 
 const styles = StyleSheet.create({
-  meta: { color: "rgba(232,245,233,0.7)" },
-  name: { color: colors.text, fontSize: 16, fontWeight: "800" },
-  zone: { borderBottomColor: "rgba(232,245,233,0.1)", borderBottomWidth: 1, paddingVertical: 12 },
+  meta: { color: colors.onSurfaceVariant },
+  name: { color: colors.onSurface, fontSize: 16, fontWeight: "800" },
+  zone: { borderBottomColor: colors.outlineVariant, borderBottomWidth: 1, paddingVertical: 12 },
 });

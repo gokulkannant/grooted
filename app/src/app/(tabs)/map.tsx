@@ -23,7 +23,12 @@ export default function MapScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+      nestedScrollEnabled
+    >
       <TerritoryMap
         seedDrops={seedDrops.length ? seedDrops : [fallbackDrop]}
         zones={nearbyZones.length ? nearbyZones : [fallbackZone]}
@@ -33,5 +38,12 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: colors.background, flexGrow: 1, padding: spacing.lg },
+  scroll: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  container: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
 });

@@ -17,11 +17,13 @@ export function SeedDropMarker({ seedDrop }: SeedDropMarkerProps) {
 const styles = StyleSheet.create({
   marker: {
     alignItems: "center",
-    backgroundColor: colors.accent,
+    backgroundColor: colors.tertiaryFixed,
     borderRadius: 999,
-    height: 42,
+    borderWidth: 3,
+    borderColor: colors.border,
+    height: 46,
     justifyContent: "center",
-    width: 42,
+    width: 46,
   },
-  text: { color: colors.textLight, fontWeight: "900" },
+  text: { color: colors.onTertiaryContainer, fontWeight: "900", fontSize: 13 },
 });

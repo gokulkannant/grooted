@@ -58,11 +58,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: true,
     bundleIdentifier: getUniqueIdentifier(),
     buildNumber: "1",
-    googleServicesFile: IS_DEV
-      ? "./GoogleService-Info-dev.plist"
-      : IS_PREVIEW
-        ? "./GoogleService-Info-preview.plist"
-        : "./GoogleService-Info.plist",
+    // googleServicesFile — uncomment when Firebase is configured
+    // googleServicesFile: IS_DEV
+    //   ? "./GoogleService-Info-dev.plist"
+    //   : IS_PREVIEW
+    //     ? "./GoogleService-Info-preview.plist"
+    //     : "./GoogleService-Info.plist",
     infoPlist: {
       NSCameraUsageDescription:
         "Grooted uses the camera to scan your plants and log your daily streak.",
@@ -93,7 +94,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#1A3C2A",
     },
     package: getUniqueIdentifier(),
-    googleServicesFile: "./google-services.json",
+    // googleServicesFile: "./google-services.json", // uncomment when Firebase is configured
+    config: {
+      googleMaps: {
+        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+      },
+    },
     permissions: [
       "CAMERA",
       "ACCESS_FINE_LOCATION",
@@ -178,9 +184,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     "./plugins/withGradleMemory",
-    // Firebase
-    "@react-native-firebase/app",
-    "@react-native-firebase/messaging",
+    // Firebase — uncomment when google-services.json is configured
+    // "@react-native-firebase/app",
+    // "@react-native-firebase/messaging",
     // Dev client only in development
     ...(IS_DEV ? ["expo-dev-client"] : []),
   ],

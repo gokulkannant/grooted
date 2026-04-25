@@ -17,6 +17,6 @@ export function SeasonBanner({ season }: SeasonBannerProps) {
 }
 
 const styles = StyleSheet.create({
-  text: { color: "rgba(232,245,233,0.72)" },
-  title: { color: colors.text, fontSize: 20, fontWeight: "900" },
+  text: { color: colors.onSurfaceVariant },
+  title: { color: colors.onSurface, fontSize: 20, fontWeight: "900" },
 });

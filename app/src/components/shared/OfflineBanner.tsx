@@ -13,10 +13,12 @@ export function OfflineBanner({ visible }: OfflineBannerProps) {
 
 const styles = StyleSheet.create({
   banner: {
-    backgroundColor: colors.warning,
-    color: colors.textLight,
+    backgroundColor: colors.tertiaryFixed,
+    color: colors.onTertiaryContainer,
     fontWeight: "800",
     padding: spacing.sm,
     textAlign: "center",
+    borderBottomWidth: 3,
+    borderBottomColor: colors.border,
   },
 });

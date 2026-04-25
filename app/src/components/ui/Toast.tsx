@@ -15,10 +15,12 @@ export function Toast({ message }: ToastProps) {
 }
 
 const styles = StyleSheet.create({
-  text: { color: colors.text },
+  text: { color: colors.onSurface, fontWeight: "700" },
   toast: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceContainerLowest,
     borderRadius: radius.md,
+    borderWidth: 3,
+    borderColor: colors.border,
     padding: spacing.md,
   },
 });

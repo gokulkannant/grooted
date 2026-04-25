@@ -1,24 +1,30 @@
 import { Link } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { colors } from "@/constants/colors";
-import { spacing } from "@/constants/layout";
+import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
 
 export default function LandingScreen() {
   return (
     <View style={styles.container}>
-      <View style={styles.cardWrapper}>
-        <View style={styles.cardShadow} />
-        <View style={styles.card}>
-          <Text style={styles.title}>GROOTED</Text>
-          <Text style={styles.copy}>
-            Grow real plants, hold your streak, and claim your neighborhood.
-          </Text>
-        </View>
+      {/* Badge */}
+      <View style={styles.badge}>
+        <Text style={styles.badgeText}>EARLY ACCESS</Text>
       </View>
+
+      {/* Hero Card */}
+      <View style={styles.heroCard}>
+        <Text style={styles.plantEmoji}>🌱</Text>
+        <Text style={styles.title}>GROOTED</Text>
+        <Text style={styles.subtitle}>
+          Turn real plant care into a local farming game.
+        </Text>
+      </View>
+
+      {/* CTA */}
       <Link href="/login" asChild>
-        <Button>Start farming</Button>
+        <Button variant="accent">🌿  Start Growing</Button>
       </Link>
     </View>
   );
@@ -26,40 +32,57 @@ export default function LandingScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background,
     flex: 1,
-    gap: spacing.xl,
+    backgroundColor: colors.background,
     justifyContent: "center",
     padding: spacing.lg,
-  },
-  cardWrapper: {
-    position: "relative",
-    marginBottom: spacing.md,
-  },
-  cardShadow: {
-    position: "absolute",
-    top: 8,
-    left: 8,
-    right: -8,
-    bottom: -8,
-    backgroundColor: colors.shadow,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderWidth: 4,
+    gap: spacing.lg,
+  } as ViewStyle,
+  badge: {
+    alignSelf: "center",
+    backgroundColor: colors.tertiaryFixed,
     borderColor: colors.border,
-    padding: spacing.xl,
-  },
-  copy: {
-    color: colors.text,
-    fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: typography.sizes.lg,
-    marginTop: spacing.md,
-  },
+    borderWidth: 2,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    ...shadows.sm,
+  } as ViewStyle,
+  badgeText: {
+    fontFamily: `${typography.fonts.secondary}-Bold`,
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.bold,
+    color: colors.onTertiaryContainer,
+    textTransform: "uppercase",
+    letterSpacing: 2,
+  } as TextStyle,
+  heroCard: {
+    backgroundColor: colors.surfaceContainerLowest,
+    borderColor: colors.border,
+    borderWidth: 4,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    alignItems: "center",
+    gap: spacing.sm,
+    ...shadows.lg,
+  } as ViewStyle,
+  plantEmoji: {
+    fontSize: 80,
+    marginBottom: spacing.xs,
+  } as TextStyle,
   title: {
-    color: colors.primaryDark,
     fontFamily: `${typography.fonts.primary}-ExtraBold`,
     fontSize: typography.sizes.xxxl,
-    letterSpacing: -1,
-  },
+    fontWeight: typography.weights.extrabold,
+    color: colors.primary,
+    letterSpacing: -2,
+    textTransform: "uppercase",
+  } as TextStyle,
+  subtitle: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: typography.sizes.lg,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+    maxWidth: 280,
+  } as TextStyle,
 });

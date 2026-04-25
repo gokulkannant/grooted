@@ -1,0 +1,8 @@
+{
+  "name": "grooted",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "app": "node --no-deprecation scripts/dev-app.mjs"
+  }
+}

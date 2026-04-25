@@ -1,84 +1,87 @@
 import type { ReactNode } from "react";
-import { Pressable, StyleSheet, Text, View, type PressableProps } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  type PressableProps,
+  type TextStyle,
+  type ViewStyle,
+} from "react-native";
 import { colors } from "@/constants/colors";
-import { radius, spacing } from "@/constants/layout";
+import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "accent" | "ghost";
 
 type ButtonProps = PressableProps & {
   children: ReactNode;
   variant?: ButtonVariant;
+  icon?: ReactNode;
 };
 
-export function Button({ children, variant = "primary", style, ...props }: ButtonProps) {
+const variantStyles: Record<ButtonVariant, { bg: string; text: string }> = {
+  primary: { bg: colors.primary, text: colors.onPrimary },
+  secondary: { bg: colors.secondary, text: colors.onSecondary },
+  accent: { bg: colors.primaryFixed, text: colors.onPrimaryFixed },
+  ghost: { bg: "transparent", text: colors.primary },
+};
+
+export function Button({ children, variant = "primary", icon, style, ...props }: ButtonProps) {
+  const v = variantStyles[variant];
+
   return (
-    <Pressable style={typeof style === "function" ? style : style} {...props}>
-      {({ pressed }) => (
-        <View style={styles.container}>
-          {variant !== "ghost" && <View style={styles.shadowBlock} />}
-          <View
-            style={[
-              styles.base,
-              styles[variant],
-              pressed && variant !== "ghost" && styles.pressed,
-            ]}
-          >
-            <Text style={[styles.label, variant === "ghost" && styles.ghostLabel]}>
-              {children}
-            </Text>
-          </View>
-        </View>
-      )}
+    <Pressable
+      style={({ pressed }) => [
+        styles.base,
+        { backgroundColor: v.bg },
+        variant !== "ghost" && shadows.lg,
+        variant !== "ghost" && {
+          borderWidth: 4,
+          borderColor: colors.border,
+        },
+        pressed && variant !== "ghost" && styles.pressed,
+        typeof style === "function" ? style({ pressed }) : style,
+      ]}
+      {...props}
+    >
+      {icon}
+      <Text
+        style={[
+          styles.label,
+          { color: v.text },
+          variant === "ghost" && styles.ghostLabel,
+        ]}
+      >
+        {children}
+      </Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    minHeight: 56,
-    marginVertical: spacing.xs,
-    position: "relative",
-  },
-  shadowBlock: {
-    position: "absolute",
-    top: 8,
-    left: 8,
-    right: -8,
-    bottom: -8,
-    backgroundColor: colors.shadow,
-    borderRadius: radius.none,
-  },
   base: {
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 48,
+    flexDirection: "row",
+    gap: spacing.xs,
+    minHeight: 56,
     paddingHorizontal: spacing.md,
-    borderRadius: radius.none,
-    borderWidth: 4,
-    borderColor: colors.border,
-    transform: [{ translateX: 0 }, { translateY: 0 }],
-  },
+    paddingVertical: spacing.sm,
+    borderRadius: radius.md,
+  } as ViewStyle,
   pressed: {
     transform: [{ translateX: 6 }, { translateY: 6 }],
-  },
-  ghost: {
-    backgroundColor: "transparent",
-    borderWidth: 0,
-  },
-  ghostLabel: {
-    color: colors.primaryDark,
-  },
+    ...shadows.pressed,
+  } as ViewStyle,
   label: {
-    color: colors.textLight,
     fontSize: typography.sizes.md,
-    fontFamily: `${typography.fonts.primary}-ExtraBold`,
-    fontWeight: "800",
-  },
-  primary: {
-    backgroundColor: colors.primary,
-  },
-  secondary: {
-    backgroundColor: colors.secondary,
-  },
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontWeight: typography.weights.bold,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  } as TextStyle,
+  ghostLabel: {
+    textTransform: "none",
+    letterSpacing: 0,
+  } as TextStyle,
 });

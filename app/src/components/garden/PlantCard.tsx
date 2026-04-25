@@ -1,8 +1,9 @@
 import { Link, type Href } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
 import { Card } from "@/components/ui/Card";
 import { colors } from "@/constants/colors";
-import { spacing } from "@/constants/layout";
+import { radius, shadows, spacing } from "@/constants/layout";
+import { typography } from "@/constants/typography";
 import type { Plant } from "@/types/plant";
 import { PlantHealthIndicator } from "@/components/garden/PlantHealthIndicator";
 
@@ -16,7 +17,7 @@ export function PlantCard({ plant }: PlantCardProps) {
       <Pressable style={styles.pressable}>
         <Card style={styles.card}>
           <View style={styles.imagePlaceholder}>
-            <Text style={styles.sprout}>G</Text>
+            <Text style={styles.sprout}>🌿</Text>
           </View>
           <Text style={styles.name}>{plant.name}</Text>
           <Text style={styles.species}>{plant.species.commonName}</Text>
@@ -28,16 +29,34 @@ export function PlantCard({ plant }: PlantCardProps) {
 }
 
 const styles = StyleSheet.create({
-  card: { gap: spacing.sm },
+  card: {
+    gap: spacing.sm,
+  } as ViewStyle,
   imagePlaceholder: {
     alignItems: "center",
     aspectRatio: 1,
-    backgroundColor: "rgba(46,204,113,0.16)",
-    borderRadius: 8,
+    backgroundColor: colors.primaryFixed,
+    borderRadius: radius.md,
+    borderWidth: 3,
+    borderColor: colors.border,
     justifyContent: "center",
-  },
-  name: { color: colors.text, fontSize: 16, fontWeight: "800" },
-  pressable: { width: "48%" },
-  species: { color: "rgba(232,245,233,0.72)", fontSize: 13 },
-  sprout: { color: colors.primary, fontSize: 32, fontWeight: "900" },
+  } as ViewStyle,
+  name: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: typography.sizes.md,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurface,
+  } as TextStyle,
+  pressable: {
+    width: "48%",
+  } as ViewStyle,
+  species: {
+    fontFamily: `${typography.fonts.primary}-Medium`,
+    fontSize: 13,
+    fontWeight: typography.weights.medium,
+    color: colors.onSurfaceVariant,
+  } as TextStyle,
+  sprout: {
+    fontSize: 40,
+  } as TextStyle,
 });

@@ -1,11 +1,12 @@
-import { StyleSheet, TextInput, type TextInputProps } from "react-native";
+import { StyleSheet, TextInput, type TextInputProps, type TextStyle } from "react-native";
 import { colors } from "@/constants/colors";
-import { radius, spacing } from "@/constants/layout";
+import { radius, shadows, spacing } from "@/constants/layout";
+import { typography } from "@/constants/typography";
 
 export function Input(props: TextInputProps) {
   return (
     <TextInput
-      placeholderTextColor="rgba(232,245,233,0.56)"
+      placeholderTextColor={colors.outline}
       style={[styles.input, props.style]}
       {...props}
     />
@@ -14,12 +15,15 @@ export function Input(props: TextInputProps) {
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: colors.surface,
-    borderColor: "rgba(232,245,233,0.12)",
+    backgroundColor: colors.surfaceContainerLowest,
+    borderColor: colors.border,
     borderRadius: radius.md,
-    borderWidth: 1,
-    color: colors.text,
-    minHeight: 48,
+    borderWidth: 4,
+    color: colors.onSurface,
+    fontFamily: `${typography.fonts.primary}-Medium`,
+    fontSize: typography.sizes.md,
+    minHeight: 52,
     paddingHorizontal: spacing.md,
-  },
+    ...shadows.sm,
+  } as TextStyle,
 });

@@ -27,6 +27,6 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   card: { gap: spacing.md },
   container: { backgroundColor: colors.background, flex: 1, gap: spacing.md, padding: spacing.lg },
-  muted: { color: "rgba(232,245,233,0.72)" },
-  title: { color: colors.text, fontSize: 20, fontWeight: "900" },
+  muted: { color: colors.onSurfaceVariant },
+  title: { color: colors.onSurface, fontSize: 20, fontWeight: "900" },
 });
