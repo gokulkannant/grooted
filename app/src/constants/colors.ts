@@ -1,67 +1,71 @@
 export const colors = {
   // Core brand
-  primary: "#154212",
-  primaryLight: "#2D5A27",
-  primaryContainer: "#2D5A27",
-  primaryFixed: "#BCF0AE",
-  primaryFixedDim: "#A1D494",
+  primary: "#1B5E20",
+  primaryDark: "#154212",
+  primaryLight: "#2E7D32",
+  primaryContainer: "#E8F5E9",
+  primaryFixed: "#C8E6C9",
   onPrimary: "#FFFFFF",
-  onPrimaryContainer: "#9DD090",
-  onPrimaryFixed: "#002201",
+  onPrimaryContainer: "#1B5E20",
 
   // Secondary (Earth Brown)
-  secondary: "#835425",
-  secondaryContainer: "#FFBF87",
-  secondaryFixed: "#FFDCC1",
+  secondary: "#5D4037",
+  secondaryContainer: "#EFEBE9",
   onSecondary: "#FFFFFF",
-  onSecondaryContainer: "#7A4B1E",
+  onSecondaryContainer: "#5D4037",
 
-  // Tertiary (Sunny Yellow)
-  tertiary: "#705D00",
-  tertiaryContainer: "#C9A900",
-  tertiaryFixed: "#FFE16D",
-  tertiaryFixedDim: "#E9C400",
+  // Tertiary (Warm accent)
+  tertiary: "#F57F17",
+  tertiaryContainer: "#FFF8E1",
+  tertiaryFixed: "#FFE082",
   onTertiary: "#FFFFFF",
-  onTertiaryContainer: "#4C3E00",
+  onTertiaryContainer: "#E65100",
 
   // Surfaces
-  background: "#F9F9F9",
-  surface: "#F9F9F9",
-  surfaceContainer: "#EEEEEE",
-  surfaceContainerLow: "#F3F3F3",
-  surfaceContainerHigh: "#E8E8E8",
-  surfaceContainerHighest: "#E2E2E2",
+  background: "#F1F8E9",
+  surface: "#FFFFFF",
+  surfaceContainer: "#F5F5F5",
+  surfaceContainerLow: "#FAFAFA",
+  surfaceContainerHigh: "#EEEEEE",
+  surfaceContainerHighest: "#E0E0E0",
   surfaceContainerLowest: "#FFFFFF",
-  surfaceVariant: "#E2E2E2",
+  surfaceVariant: "#F5F5F5",
 
   // On-surface
-  onSurface: "#1A1C1C",
-  onSurfaceVariant: "#42493E",
-  onBackground: "#1A1C1C",
+  onSurface: "#1B1B1B",
+  onSurfaceVariant: "#6B6B6B",
+  onBackground: "#1B1B1B",
 
-  // Borders & shadows (neo-brutalist)
-  border: "#000000",
+  // Borders & shadows
+  border: "#E0E0E0",
+  borderStrong: "#BDBDBD",
   shadow: "#000000",
 
   // Utility
-  outline: "#72796E",
-  outlineVariant: "#C2C9BB",
-  error: "#BA1A1A",
-  errorContainer: "#FFDAD6",
+  outline: "#9E9E9E",
+  outlineVariant: "#E0E0E0",
+  error: "#D32F2F",
+  errorContainer: "#FFEBEE",
   onError: "#FFFFFF",
 
-  // Legacy aliases (used by existing components)
-  primaryDark: "#154212",
+  // Legacy aliases
+  primaryDark2: "#154212",
   backgroundLight: "#FFFFFF",
-  surfaceLight: "#F9F9F9",
+  surfaceLight: "#FAFAFA",
 
   // Semantic aliases
-  text: "#1A1C1C",
+  text: "#1B1B1B",
   textLight: "#FFFFFF",
-  textMuted: "#42493E",
-  streak: "#E9C400",
-  territory: "#2D5A27",
-  accent: "#FFE16D",
-  danger: "#BA1A1A",
-  warning: "#FFD700",
+  textMuted: "#6B6B6B",
+  streak: "#F57F17",
+  territory: "#2E7D32",
+  accent: "#FFE082",
+  danger: "#D32F2F",
+  warning: "#FFA000",
+
+  // Status
+  healthy: "#4CAF50",
+  needsWater: "#2196F3",
+  wilting: "#FF9800",
+  dead: "#9E9E9E",
 } as const;

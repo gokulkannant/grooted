@@ -16,17 +16,16 @@ type ButtonVariant = "primary" | "secondary" | "accent" | "ghost";
 type ButtonProps = PressableProps & {
   children: ReactNode;
   variant?: ButtonVariant;
-  icon?: ReactNode;
 };
 
 const variantStyles: Record<ButtonVariant, { bg: string; text: string }> = {
   primary: { bg: colors.primary, text: colors.onPrimary },
   secondary: { bg: colors.secondary, text: colors.onSecondary },
-  accent: { bg: colors.primaryFixed, text: colors.onPrimaryFixed },
+  accent: { bg: colors.primaryContainer, text: colors.primary },
   ghost: { bg: "transparent", text: colors.primary },
 };
 
-export function Button({ children, variant = "primary", icon, style, ...props }: ButtonProps) {
+export function Button({ children, variant = "primary", style, ...props }: ButtonProps) {
   const v = variantStyles[variant];
 
   return (
@@ -44,16 +43,7 @@ export function Button({ children, variant = "primary", icon, style, ...props }:
       ]}
       {...props}
     >
-      {icon}
-      <Text
-        style={[
-          styles.label,
-          { color: v.text },
-          variant === "ghost" && styles.ghostLabel,
-        ]}
-      >
-        {children}
-      </Text>
+      <Text style={[styles.label, { color: v.text }]}>{children}</Text>
     </Pressable>
   );
 }
@@ -64,24 +54,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     gap: spacing.xs,
-    minHeight: 56,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    minHeight: 52,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 14,
     borderRadius: radius.md,
   } as ViewStyle,
   pressed: {
-    transform: [{ translateX: 6 }, { translateY: 6 }],
-    ...shadows.pressed,
+    opacity: 0.85,
+    transform: [{ scale: 0.97 }],
   } as ViewStyle,
   label: {
-    fontSize: typography.sizes.md,
     fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 15,
     fontWeight: typography.weights.bold,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  } as TextStyle,
-  ghostLabel: {
-    textTransform: "none",
-    letterSpacing: 0,
   } as TextStyle,
 });

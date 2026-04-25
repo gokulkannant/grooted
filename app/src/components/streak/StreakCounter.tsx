@@ -10,10 +10,12 @@ type StreakCounterProps = {
 export function StreakCounter({ count }: StreakCounterProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.emoji}>🔥</Text>
+      <View style={styles.iconCircle}>
+        <Text style={styles.emoji}>🌱</Text>
+      </View>
       <View style={styles.textBlock}>
-        <Text style={styles.label}>STREAK</Text>
-        <Text style={styles.count}>Day {count}</Text>
+        <Text style={styles.label}>CURRENT STREAK</Text>
+        <Text style={styles.count}>{count} Days</Text>
       </View>
     </View>
   );
@@ -21,35 +23,41 @@ export function StreakCounter({ count }: StreakCounterProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.tertiaryContainer,
-    borderColor: colors.border,
-    borderWidth: 4,
+    backgroundColor: colors.surface,
     borderRadius: radius.md,
-    padding: spacing.sm,
+    padding: spacing.md,
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
-    ...shadows.md,
+    gap: spacing.md,
+    ...shadows.sm,
+  } as ViewStyle,
+  iconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.primaryContainer,
+    alignItems: "center",
+    justifyContent: "center",
   } as ViewStyle,
   emoji: {
-    fontSize: 32,
+    fontSize: 22,
   } as TextStyle,
   textBlock: {
     flex: 1,
   } as ViewStyle,
   label: {
-    fontFamily: `${typography.fonts.secondary}-Bold`,
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.bold,
-    color: colors.onTertiaryContainer,
+    fontFamily: `${typography.fonts.secondary}-Medium`,
+    fontSize: 11,
+    fontWeight: typography.weights.medium,
+    color: colors.onSurfaceVariant,
     textTransform: "uppercase",
-    opacity: 0.8,
+    letterSpacing: 1,
     marginBottom: 2,
   } as TextStyle,
   count: {
     fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: typography.sizes.xl,
+    fontSize: 20,
     fontWeight: typography.weights.bold,
-    color: colors.onTertiaryContainer,
+    color: colors.onSurface,
   } as TextStyle,
 });

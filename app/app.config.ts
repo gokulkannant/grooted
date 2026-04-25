@@ -51,7 +51,7 @@ export default ({ config }: ConfigContext): GrootedExpoConfig => ({
     : "./assets/icons/adaptive-icon.png",
   scheme: getScheme(),
   userInterfaceStyle: "automatic",
-  newArchEnabled: true,
+  newArchEnabled: false,
   description:
     "Grooted — A real-world farming RPG. Grow plants, claim territory, compete with friends, and turn your city green. Streak-based daily logs, AI plant scanning, and geo-based leaderboards.",
   splash: {
@@ -133,6 +133,10 @@ export default ({ config }: ConfigContext): GrootedExpoConfig => ({
       {
         android: {
           minSdkVersion: 24,
+          newArchEnabled: false,
+        },
+        ios: {
+          newArchEnabled: false,
         },
       },
     ],

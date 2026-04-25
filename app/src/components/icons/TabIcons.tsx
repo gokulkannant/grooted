@@ -77,7 +77,7 @@ export function MapIcon({ size = 24, color = "#000", strokeWidth = 2 }: IconProp
 }
 
 /**
- * Scan icon — a viewfinder/camera crosshair with leaf
+ * Scan icon — a clean viewfinder / QR-style scanner
  */
 export function ScanIcon({ size = 24, color = "#000", strokeWidth = 2 }: IconProps) {
   return (
@@ -111,26 +111,13 @@ export function ScanIcon({ size = 24, color = "#000", strokeWidth = 2 }: IconPro
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* Leaf in center */}
-      <Path
-        d="M12 16V12"
+      {/* Center crosshair */}
+      <Circle
+        cx="12"
+        cy="12"
+        r="3"
         stroke={color}
         strokeWidth={strokeWidth}
-        strokeLinecap="round"
-      />
-      <Path
-        d="M12 12C12 9.5 9.5 8 7 8C7 10.5 9.5 12 12 12Z"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Path
-        d="M12 12C12 9.5 14.5 8 17 8C17 10.5 14.5 12 12 12Z"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
       />
     </Svg>
   );

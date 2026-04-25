@@ -1,7 +1,5 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { TerritoryMap } from "@/components/map/TerritoryMap";
-import { colors } from "@/constants/colors";
-import { spacing } from "@/constants/layout";
 import { useMapStore } from "@/stores/mapStore";
 
 export default function MapScreen() {
@@ -23,27 +21,17 @@ export default function MapScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.scroll}
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      nestedScrollEnabled
-    >
+    <View style={styles.container}>
       <TerritoryMap
         seedDrops={seedDrops.length ? seedDrops : [fallbackDrop]}
         zones={nearbyZones.length ? nearbyZones : [fallbackZone]}
       />
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   container: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
+    flex: 1,
   },
 });

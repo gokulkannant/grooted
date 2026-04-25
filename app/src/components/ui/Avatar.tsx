@@ -15,38 +15,33 @@ export function Avatar({ name, uri, size = 44 }: AvatarProps) {
 
   if (uri) {
     return (
-      <View style={[styles.ring, { width: size + 8, height: size + 8, borderRadius: (size + 8) / 2 }]}>
-        <Image source={{ uri }} style={{ height: size, width: size, borderRadius }} />
-      </View>
+      <Image
+        source={{ uri }}
+        style={[styles.avatar, { height: size, width: size, borderRadius }]}
+      />
     );
   }
 
   return (
-    <View style={[styles.ring, { width: size + 8, height: size + 8, borderRadius: (size + 8) / 2 }]}>
-      <View style={[styles.fallback, { height: size, width: size, borderRadius }]}>
-        <Text style={[styles.initials, { fontSize: size * 0.35 }]}>{initials}</Text>
-      </View>
+    <View style={[styles.fallback, { height: size, width: size, borderRadius }]}>
+      <Text style={[styles.initials, { fontSize: size * 0.35 }]}>{initials}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  ring: {
-    borderWidth: 4,
-    borderColor: colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.surfaceContainerLowest,
+  avatar: {
     ...shadows.md,
   } as ViewStyle,
   fallback: {
     alignItems: "center",
-    backgroundColor: colors.primaryContainer,
+    backgroundColor: colors.primary,
     justifyContent: "center",
+    ...shadows.md,
   } as ViewStyle,
   initials: {
-    fontFamily: `${typography.fonts.primary}-ExtraBold`,
-    fontWeight: typography.weights.extrabold,
-    color: colors.onPrimaryContainer,
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontWeight: typography.weights.bold,
+    color: colors.onPrimary,
   } as TextStyle,
 });

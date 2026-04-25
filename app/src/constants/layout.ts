@@ -1,50 +1,51 @@
 export const spacing = {
   unit: 4,
   xs: 8,
-  sm: 16,
-  md: 24,
-  lg: 32,
-  xl: 48,
-  gutter: 24,
-  margin: 32,
+  sm: 12,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+  gutter: 20,
+  margin: 20,
 } as const;
 
-// Neo-brutalist: sharp corners with optional slight rounding
 export const radius = {
   none: 0,
-  sm: 4,
-  md: 8,
-  lg: 12,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
   full: 9999,
 } as const;
 
-// Hard offset shadows (neo-brutalist signature)
+// Soft shadows for the clean modern look
 export const shadows = {
   sm: {
     shadowColor: "#000000",
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 1,
   },
   md: {
     shadowColor: "#000000",
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   lg: {
     shadowColor: "#000000",
-    shadowOffset: { width: 8, height: 8 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 6,
   },
   pressed: {
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
+    shadowOpacity: 0,
     shadowRadius: 0,
     elevation: 0,
   },
