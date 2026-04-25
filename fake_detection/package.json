@@ -1,0 +1,11 @@
+{
+  "name": "fake-detection-mvp",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "detect": "node detect.mjs"
+  },
+  "dependencies": {
+    "openai": "4.86.2"
+  }
+}
