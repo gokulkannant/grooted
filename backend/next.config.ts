@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
   allowedDevOrigins: ["rootend-dev.dopolabs.com"],
   output: "standalone",
   async headers() {
