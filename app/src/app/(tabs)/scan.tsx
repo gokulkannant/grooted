@@ -37,6 +37,7 @@ export default function ScanScreen() {
   const addPlant = useGardenStore((s) => s.addPlant);
   const cameraRef = useRef<CameraView>(null);
   const navigation = useNavigation();
+  const [cameraReady, setCameraReady] = useState(false);
 
   // Camera is active when we have permission and no result showing
   const cameraActive = permission?.granted && !result;
@@ -58,13 +59,28 @@ export default function ScanScreen() {
 
   const handleCapture = async () => {
     if (capturing || analyzing) return;
+    if (!cameraRef.current) {
+      setError("Camera is still starting up. Please wait a moment and try again.");
+      return;
+    }
     setCapturing(true);
     setError(null);
 
     try {
+      // Small delay to ensure camera buffer is ready
+      await new Promise((r) => setTimeout(r, 300));
+
+      // Grab ref once — it can't go null mid-capture
+      const camera = cameraRef.current;
+      if (!camera) {
+        setError("Camera disconnected. Please go back and try again.");
+        setCapturing(false);
+        return;
+      }
+
       // Capture photo and GPS in parallel
       const [photoResult, locationResult] = await Promise.allSettled([
-        cameraRef.current?.takePictureAsync({
+        camera.takePictureAsync({
           quality: 0.3,
           base64: true,
           imageType: "jpg",
@@ -77,12 +93,16 @@ export default function ScanScreen() {
       const imageBase64 = photo?.base64 ?? "";
 
       if (!imageBase64) {
-        setError("Failed to capture photo. Please try again.");
+        const reason = photoResult.status === "rejected"
+          ? photoResult.reason?.message ?? "Unknown camera error"
+          : "Camera returned empty image";
+        console.error("[Scan] Capture failed:", reason);
+        setError(`Failed to capture photo: ${reason}. Please try again.`);
         setCapturing(false);
         return;
       }
 
-      // Photo taken — switch to analyzing state
+      // Photo captured — now show analyzing screen
       setCapturing(false);
       setAnalyzing(true);
 
@@ -257,6 +277,7 @@ export default function ScanScreen() {
               setResult(null);
               setError(null);
               setAdded(false);
+              setCameraReady(false);
             }}
           >
             <CameraGlyphIcon size={20} />
@@ -271,7 +292,7 @@ export default function ScanScreen() {
   return (
     <View style={styles.cameraContainer}>
       <StatusBar hidden />
-      <CameraView ref={cameraRef} style={styles.camera} facing="back" />
+      <CameraView ref={cameraRef} style={styles.camera} facing="back" onCameraReady={() => setCameraReady(true)} />
       {/* Overlay — absolute positioned on top of camera */}
       <View style={styles.overlay}>
         {/* Top hint */}
@@ -304,7 +325,7 @@ export default function ScanScreen() {
               pressed && styles.captureButtonPressed,
             ]}
             onPress={handleCapture}
-            disabled={capturing}
+            disabled={capturing || !cameraReady}
           >
             <View style={styles.captureOuter}>
               {capturing ? (

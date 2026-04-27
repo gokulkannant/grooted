@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import { getDb } from "@/lib/db";
-import { uploadToR2, generatePhotoKey } from "@/lib/r2";
+import { uploadToR2, generatePhotoKey, isR2Configured } from "@/lib/r2";
 import {
   analyzePlantImage,
   type PlantAnalysisResult,
@@ -38,17 +38,21 @@ const isScanBody = (body: unknown): body is PlantScanBody =>
 const storeScanResult = async (scan: Record<string, unknown>, imageBase64?: string) => {
   let imageUrl: string | undefined;
 
-  // Upload image to Cloudflare R2
-  if (imageBase64) {
-    try {
-      const imageBuffer = Buffer.from(imageBase64, "base64");
-      const key = generatePhotoKey("anonymous", "scan");
-      imageUrl = await uploadToR2(key, imageBuffer, "image/jpeg");
-      console.log(`✅ Image uploaded to R2: ${key}`);
-    } catch (error) {
-      console.warn("Failed to upload image to R2:", error);
-    }
-  }
+  // Upload image to Cloudflare R2 — disabled until R2 credentials are configured
+  // if (imageBase64) {
+  //   if (!isR2Configured()) {
+  //     console.log("⏭️  R2 not configured — skipping image upload");
+  //   } else {
+  //     try {
+  //       const imageBuffer = Buffer.from(imageBase64, "base64");
+  //       const key = generatePhotoKey("anonymous", "scan");
+  //       imageUrl = await uploadToR2(key, imageBuffer, "image/jpeg");
+  //       console.log(`✅ Image uploaded to R2: ${key}`);
+  //     } catch (error) {
+  //       console.warn("Failed to upload image to R2:", error);
+  //     }
+  //   }
+  // }
 
   if (!process.env["DATABASE_URL"]) return { imageUrl };
 

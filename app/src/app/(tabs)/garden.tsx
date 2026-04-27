@@ -1,38 +1,43 @@
 import { Link } from "expo-router";
 import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
+  type ImageStyle,
   type TextStyle,
   type ViewStyle,
 } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import {
+  DropletIcon,
+  LeafIcon,
+  SproutIcon,
+} from "@/components/icons/GrootedIcons";
+import { ScanIcon } from "@/components/icons/TabIcons";
 import { colors } from "@/constants/colors";
 import { radius, shadows, spacing } from "@/constants/layout";
 import { typography } from "@/constants/typography";
-import { ScanIcon, GardenIcon } from "@/components/icons/TabIcons";
 import { useGardenStore } from "@/stores/gardenStore";
 
-// ── Demo data ───────────────────────────────────────────────────────
-
-const DEMO_PLANTS = [
-  { id: "1", emoji: "🪴", name: "Monstera", species: "Swiss Cheese Plant", health: 95, status: "Hydrated", color: colors.healthy, daysOld: 45 },
-  { id: "2", emoji: "🌵", name: "Aloe Vera", species: "Succulent", health: 78, status: "Needs Water", color: colors.needsWater, daysOld: 30 },
-  { id: "3", emoji: "🌿", name: "Tulsi", species: "Holy Basil", health: 88, status: "Healthy", color: colors.healthy, daysOld: 22 },
-  { id: "4", emoji: "🌻", name: "Sunflower", species: "Helianthus", health: 62, status: "Wilting", color: colors.wilting, daysOld: 15 },
-];
+// ── Care tips ───────────────────────────────────────────────────────
 
 const CARE_TIPS = [
-  { emoji: "💧", tip: "Most indoor plants need watering every 1-2 weeks" },
-  { emoji: "☀️", tip: "Rotate plants quarterly for even growth" },
-  { emoji: "🌡️", tip: "Keep plants away from cold drafts and heaters" },
+  { icon: "💧", title: "Watering", tip: "Most indoor plants prefer watering every 1–2 weeks. Let the top inch of soil dry out first." },
+  { icon: "☀️", title: "Light", tip: "Rotate your plants a quarter turn each week for even, balanced growth." },
+  { icon: "🌡️", title: "Temperature", tip: "Keep plants away from cold drafts, AC vents, and direct heater airflow." },
+  { icon: "✂️", title: "Pruning", tip: "Remove yellow or dead leaves regularly to redirect energy to healthy growth." },
 ];
 
 export default function GardenScreen() {
   const plants = useGardenStore((state) => state.plants);
   const hasPlants = plants.length > 0;
+
+  const healthyCount = plants.filter((p) => p.health === "healthy").length;
+  const needsCareCount = plants.filter(
+    (p) => p.health !== "healthy" && p.health !== "unknown",
+  ).length;
 
   return (
     <ScrollView
@@ -42,162 +47,209 @@ export default function GardenScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerIcon}>
+          <LeafIcon size={22} color={colors.primary} />
+        </View>
+        <View style={styles.headerText}>
           <Text style={styles.title}>My Garden</Text>
           <Text style={styles.subtitle}>
             {hasPlants
-              ? `${plants.length} plant${plants.length > 1 ? "s" : ""} growing`
+              ? `${plants.length} plant${plants.length !== 1 ? "s" : ""} in your collection`
               : "Your personal plant collection"}
           </Text>
         </View>
-        <Link href="/plant/add" asChild>
-          <Pressable style={({ pressed }) => [styles.addBtn, pressed && { opacity: 0.85 }]}>
-            <Text style={styles.addBtnPlus}>+</Text>
-          </Pressable>
-        </Link>
       </View>
 
-      {/* Stats */}
+      {/* Stats bar */}
       <View style={styles.statsBar}>
-        <StatItem value={hasPlants ? plants.length : 0} label="Total" emoji="🌱" />
+        <View style={styles.statItem}>
+          <View style={[styles.statIconWrap, { backgroundColor: colors.primaryContainer }]}>
+            <SproutIcon size={18} color={colors.primary} />
+          </View>
+          <Text style={styles.statValue}>{plants.length}</Text>
+          <Text style={styles.statLabel}>Total</Text>
+        </View>
         <View style={styles.statDivider} />
-        <StatItem value={hasPlants ? plants.filter((p) => p.health === "healthy").length : 0} label="Healthy" emoji="💚" />
+        <View style={styles.statItem}>
+          <View style={[styles.statIconWrap, { backgroundColor: "#E8F5E9" }]}>
+            <LeafIcon size={18} color={colors.healthy} />
+          </View>
+          <Text style={styles.statValue}>{healthyCount}</Text>
+          <Text style={styles.statLabel}>Healthy</Text>
+        </View>
         <View style={styles.statDivider} />
-        <StatItem value={hasPlants ? plants.filter((p) => p.health !== "healthy" && p.health !== "unknown").length : 0} label="Need Care" emoji="💧" />
+        <View style={styles.statItem}>
+          <View style={[styles.statIconWrap, { backgroundColor: "#E3F2FD" }]}>
+            <DropletIcon size={18} color={colors.needsWater} />
+          </View>
+          <Text style={styles.statValue}>{needsCareCount}</Text>
+          <Text style={styles.statLabel}>Need Care</Text>
+        </View>
       </View>
 
-      {!hasPlants ? (
+      {/* Plant grid or empty state */}
+      {hasPlants ? (
+        <View style={styles.plantGrid}>
+          {plants.map((plant) => {
+            const statusColor = getStatusColor(plant.health);
+            const statusLabel = getStatusLabel(plant.health);
+            const daysOld = Math.max(
+              1,
+              Math.floor(
+                (Date.now() - new Date(plant.plantedAt).getTime()) / 86400000,
+              ),
+            );
+
+            return (
+              <View key={plant.id} style={styles.plantCard}>
+                {/* Image area */}
+                <View
+                  style={[
+                    styles.plantImageBox,
+                    !plant.imageUrl && { backgroundColor: `${statusColor}12` },
+                  ]}
+                >
+                  {plant.imageUrl ? (
+                    <Image
+                      source={{ uri: plant.imageUrl }}
+                      style={styles.plantPhoto}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <LeafIcon size={44} color={statusColor} />
+                  )}
+                  {/* Days badge */}
+                  <View
+                    style={[
+                      styles.daysBadge,
+                      {
+                        backgroundColor: plant.imageUrl
+                          ? "rgba(0,0,0,0.5)"
+                          : `${statusColor}20`,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.daysText,
+                        { color: plant.imageUrl ? "#FFFFFF" : statusColor },
+                      ]}
+                    >
+                      {daysOld}d
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Info area */}
+                <View style={styles.plantInfo}>
+                  <Text style={styles.plantName} numberOfLines={1}>
+                    {plant.name}
+                  </Text>
+                  <Text style={styles.plantSpecies} numberOfLines={1}>
+                    {plant.species.commonName}
+                  </Text>
+                  <View style={styles.statusRow}>
+                    <View
+                      style={[styles.statusDot, { backgroundColor: statusColor }]}
+                    />
+                    <Text style={[styles.statusLabel, { color: statusColor }]}>
+                      {statusLabel}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      ) : (
         <>
-          {/* Hero empty state */}
+          {/* Empty hero */}
           <View style={styles.emptyHero}>
             <View style={styles.emptyIconOuter}>
               <View style={styles.emptyIconInner}>
-                <Text style={styles.emptyIconEmoji}>🌱</Text>
+                <SproutIcon size={40} color={colors.primary} />
               </View>
             </View>
             <Text style={styles.emptyTitle}>Your garden awaits</Text>
             <Text style={styles.emptyDesc}>
-              Scan a plant or add one manually to start tracking its health and growth.
+              Scan a plant or add one manually to start{"\n"}tracking its health
+              and growth.
             </Text>
-
-            {/* CTA buttons */}
             <View style={styles.ctaRow}>
               <Link href="/scan" asChild>
-                <Pressable style={({ pressed }) => [styles.ctaPrimary, pressed && { opacity: 0.85 }]}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.ctaPrimary,
+                    pressed && { opacity: 0.85, transform: [{ scale: 0.97 }] },
+                  ]}
+                >
                   <ScanIcon size={18} color="#FFFFFF" strokeWidth={2} />
                   <Text style={styles.ctaPrimaryText}>Scan Plant</Text>
                 </Pressable>
               </Link>
-              <Link href="/plant/add" asChild>
-                <Pressable style={({ pressed }) => [styles.ctaSecondary, pressed && { opacity: 0.85 }]}>
-                  <Text style={styles.ctaSecondaryText}>+ Add Manually</Text>
-                </Pressable>
-              </Link>
-            </View>
-          </View>
-
-          {/* Care tips */}
-          <View style={styles.tipsSection}>
-            <Text style={styles.sectionLabel}>🌿 PLANT CARE TIPS</Text>
-            {CARE_TIPS.map((item) => (
-              <View key={item.tip} style={styles.tipCard}>
-                <Text style={styles.tipEmoji}>{item.emoji}</Text>
-                <Text style={styles.tipText}>{item.tip}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Preview grid */}
-          <View style={styles.previewSection}>
-            <Text style={styles.sectionLabel}>✨ GARDEN PREVIEW</Text>
-            <Text style={styles.previewDesc}>
-              Here's what your garden will look like once you add plants
-            </Text>
-            <View style={styles.plantGrid}>
-              {DEMO_PLANTS.map((plant) => (
-                <View key={plant.id} style={styles.plantCard}>
-                  <View style={[styles.plantImageBox, { backgroundColor: `${plant.color}15` }]}>
-                    <Text style={styles.plantEmoji}>{plant.emoji}</Text>
-                    <View style={[styles.daysBadge, { backgroundColor: `${plant.color}20` }]}>
-                      <Text style={[styles.daysText, { color: plant.color }]}>{plant.daysOld}d</Text>
-                    </View>
-                  </View>
-                  <View style={styles.plantInfo}>
-                    <View style={styles.statusRow}>
-                      <View style={[styles.statusDot, { backgroundColor: plant.color }]} />
-                      <Text style={styles.statusText}>{plant.status}</Text>
-                    </View>
-                    <Text style={styles.plantName} numberOfLines={1}>{plant.name}</Text>
-                    <Text style={styles.plantSpecies} numberOfLines={1}>{plant.species}</Text>
-                    <View style={styles.healthRow}>
-                      <View style={styles.healthBar}>
-                        <View style={[styles.healthFill, { width: `${plant.health}%`, backgroundColor: plant.color }]} />
-                      </View>
-                      <Text style={[styles.healthPct, { color: plant.color }]}>{plant.health}%</Text>
-                    </View>
-                  </View>
-                </View>
-              ))}
             </View>
           </View>
         </>
-      ) : (
-        <View style={styles.plantGrid}>
-          {plants.map((plant) => {
-            const statusColor =
-              plant.health === "healthy" ? colors.healthy
-              : plant.health === "needs_water" ? colors.needsWater
-              : plant.health === "wilting" ? colors.wilting
-              : plant.health === "dead" ? colors.dead
-              : colors.healthy;
-            const statusLabel =
-              plant.health === "healthy" ? "Healthy"
-              : plant.health === "needs_water" ? "Needs Water"
-              : plant.health === "wilting" ? "Wilting"
-              : plant.health === "dead" ? "Dead"
-              : plant.health === "needs_attention" ? "Needs Attention"
-              : plant.health === "at_risk" ? "At Risk"
-              : plant.health === "diseased" ? "Diseased"
-              : "Unknown";
-            const daysOld = Math.max(1, Math.floor((Date.now() - new Date(plant.plantedAt).getTime()) / 86400000));
-
-            return (
-              <Link key={plant.id} href={`/plant/${plant.id}`} asChild>
-                <Pressable style={({ pressed }) => [styles.plantCard, pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] }]}>
-                  <View style={[styles.plantImageBox, { backgroundColor: `${statusColor}12` }]}>
-                    <Text style={styles.plantEmoji}>🌿</Text>
-                    <View style={[styles.daysBadge, { backgroundColor: `${statusColor}20` }]}>
-                      <Text style={[styles.daysText, { color: statusColor }]}>{daysOld}d</Text>
-                    </View>
-                  </View>
-                  <View style={styles.plantInfo}>
-                    <View style={styles.statusRow}>
-                      <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
-                      <Text style={styles.statusText}>{statusLabel}</Text>
-                    </View>
-                    <Text style={styles.plantName} numberOfLines={1}>{plant.name}</Text>
-                    <Text style={styles.plantSpecies} numberOfLines={1}>{plant.species.commonName}</Text>
-                  </View>
-                </Pressable>
-              </Link>
-            );
-          })}
-        </View>
       )}
+
+      {/* Care tips — always visible */}
+      <View style={styles.tipsSection}>
+        <Text style={styles.sectionLabel}>PLANT CARE TIPS</Text>
+        {CARE_TIPS.map((item) => (
+          <View key={item.title} style={styles.tipCard}>
+            <View style={styles.tipIconWrap}>
+              <Text style={styles.tipEmoji}>{item.icon}</Text>
+            </View>
+            <View style={styles.tipContent}>
+              <Text style={styles.tipTitle}>{item.title}</Text>
+              <Text style={styles.tipText}>{item.tip}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
     </ScrollView>
   );
 }
 
-// ── Stat Item ───────────────────────────────────────────────────────
+// ── Helpers ─────────────────────────────────────────────────────────
 
-function StatItem({ value, label, emoji }: { value: number; label: string; emoji: string }) {
-  return (
-    <View style={styles.statItem}>
-      <Text style={styles.statEmoji}>{emoji}</Text>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
+function getStatusColor(health: string): string {
+  switch (health) {
+    case "healthy":
+      return colors.healthy;
+    case "needs_water":
+      return colors.needsWater;
+    case "wilting":
+    case "needs_attention":
+    case "at_risk":
+      return colors.wilting;
+    case "diseased":
+    case "dead":
+      return colors.dead;
+    default:
+      return colors.outline;
+  }
+}
+
+function getStatusLabel(health: string): string {
+  switch (health) {
+    case "healthy":
+      return "Healthy";
+    case "needs_water":
+      return "Needs Water";
+    case "wilting":
+      return "Wilting";
+    case "needs_attention":
+      return "Needs Attention";
+    case "at_risk":
+      return "At Risk";
+    case "diseased":
+      return "Diseased";
+    case "dead":
+      return "Dead";
+    default:
+      return "Unknown";
+  }
 }
 
 // ── Styles ──────────────────────────────────────────────────────────
@@ -209,15 +261,26 @@ const styles = StyleSheet.create({
   } as ViewStyle,
   container: {
     padding: spacing.gutter,
-    paddingBottom: 100,
+    paddingBottom: 120,
     gap: spacing.lg,
   } as ViewStyle,
 
   // Header
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    gap: spacing.sm,
+  } as ViewStyle,
+  headerIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.primaryContainer,
+    alignItems: "center",
+    justifyContent: "center",
+  } as ViewStyle,
+  headerText: {
+    flex: 1,
   } as ViewStyle,
   title: {
     fontFamily: `${typography.fonts.primary}-Bold`,
@@ -227,48 +290,37 @@ const styles = StyleSheet.create({
   } as TextStyle,
   subtitle: {
     fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: typography.weights.medium,
     color: colors.onSurfaceVariant,
     marginTop: 2,
   } as TextStyle,
-  addBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
-    ...shadows.md,
-  } as ViewStyle,
-  addBtnPlus: {
-    fontSize: 24,
-    fontWeight: typography.weights.bold,
-    color: "#FFFFFF",
-    marginTop: -1,
-  } as TextStyle,
 
   // Stats
   statsBar: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: radius.lg,
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 14,
+    paddingVertical: 16,
     ...shadows.sm,
   } as ViewStyle,
   statItem: {
     flex: 1,
     alignItems: "center",
-    gap: 2,
+    gap: 4,
   } as ViewStyle,
-  statEmoji: {
-    fontSize: 18,
+  statIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 2,
-  } as TextStyle,
+  } as ViewStyle,
   statValue: {
     fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: typography.weights.bold,
     color: colors.onSurface,
   } as TextStyle,
@@ -280,138 +332,9 @@ const styles = StyleSheet.create({
   } as TextStyle,
   statDivider: {
     width: 1,
-    height: 32,
+    height: 40,
     backgroundColor: colors.border,
   } as ViewStyle,
-
-  // Empty hero
-  emptyHero: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: radius.lg,
-    padding: spacing.xl,
-    alignItems: "center",
-    gap: spacing.sm,
-    ...shadows.md,
-  } as ViewStyle,
-  emptyIconOuter: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: colors.primaryContainer,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.xs,
-  } as ViewStyle,
-  emptyIconInner: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: `${colors.primary}18`,
-    alignItems: "center",
-    justifyContent: "center",
-  } as ViewStyle,
-  emptyIconEmoji: {
-    fontSize: 36,
-  } as TextStyle,
-  emptyTitle: {
-    fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: 22,
-    fontWeight: typography.weights.bold,
-    color: colors.onSurface,
-  } as TextStyle,
-  emptyDesc: {
-    fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: 14,
-    fontWeight: typography.weights.medium,
-    color: colors.onSurfaceVariant,
-    textAlign: "center",
-    lineHeight: 21,
-    maxWidth: 280,
-  } as TextStyle,
-  ctaRow: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-    width: "100%",
-  } as ViewStyle,
-  ctaPrimary: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    borderRadius: radius.md,
-    paddingVertical: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    ...shadows.md,
-  } as ViewStyle,
-  ctaPrimaryText: {
-    fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: 14,
-    fontWeight: typography.weights.bold,
-    color: "#FFFFFF",
-  } as TextStyle,
-  ctaSecondary: {
-    flex: 1,
-    backgroundColor: colors.primaryContainer,
-    borderRadius: radius.md,
-    paddingVertical: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  } as ViewStyle,
-  ctaSecondaryText: {
-    fontFamily: `${typography.fonts.primary}-Bold`,
-    fontSize: 14,
-    fontWeight: typography.weights.bold,
-    color: colors.primary,
-  } as TextStyle,
-
-  // Section label
-  sectionLabel: {
-    fontFamily: `${typography.fonts.secondary}-Bold`,
-    fontSize: 11,
-    fontWeight: typography.weights.bold,
-    color: colors.onSurfaceVariant,
-    textTransform: "uppercase",
-    letterSpacing: 1.5,
-  } as TextStyle,
-
-  // Tips
-  tipsSection: {
-    gap: spacing.sm,
-  } as ViewStyle,
-  tipCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: radius.md,
-    padding: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    ...shadows.sm,
-  } as ViewStyle,
-  tipEmoji: {
-    fontSize: 20,
-  } as TextStyle,
-  tipText: {
-    flex: 1,
-    fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: 14,
-    fontWeight: typography.weights.medium,
-    color: colors.onSurfaceVariant,
-    lineHeight: 20,
-  } as TextStyle,
-
-  // Preview
-  previewSection: {
-    gap: spacing.sm,
-  } as ViewStyle,
-  previewDesc: {
-    fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: 13,
-    fontWeight: typography.weights.medium,
-    color: colors.outline,
-    marginBottom: spacing.xs,
-  } as TextStyle,
 
   // Plant grid
   plantGrid: {
@@ -421,22 +344,24 @@ const styles = StyleSheet.create({
   } as ViewStyle,
   plantCard: {
     width: "47.5%",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: radius.lg,
     overflow: "hidden",
     ...shadows.sm,
   } as ViewStyle,
   plantImageBox: {
     width: "100%",
-    aspectRatio: 1.1,
+    aspectRatio: 1,
     backgroundColor: colors.primaryContainer,
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
+    overflow: "hidden",
   } as ViewStyle,
-  plantEmoji: {
-    fontSize: 48,
-  } as TextStyle,
+  plantPhoto: {
+    width: "100%",
+    height: "100%",
+  } as ImageStyle,
   daysBadge: {
     position: "absolute",
     top: 8,
@@ -454,22 +379,6 @@ const styles = StyleSheet.create({
     padding: 12,
     gap: 3,
   } as ViewStyle,
-  statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-  } as ViewStyle,
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  } as ViewStyle,
-  statusText: {
-    fontFamily: `${typography.fonts.primary}-Medium`,
-    fontSize: 11,
-    fontWeight: typography.weights.medium,
-    color: colors.onSurfaceVariant,
-  } as TextStyle,
   plantName: {
     fontFamily: `${typography.fonts.primary}-Bold`,
     fontSize: 15,
@@ -482,26 +391,134 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.medium,
     color: colors.onSurfaceVariant,
   } as TextStyle,
-  healthRow: {
+  statusRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 5,
     marginTop: 4,
   } as ViewStyle,
-  healthBar: {
-    flex: 1,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: `${colors.primary}15`,
-    overflow: "hidden",
+  statusDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
   } as ViewStyle,
-  healthFill: {
-    height: "100%",
-    borderRadius: 2,
+  statusLabel: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 11,
+    fontWeight: typography.weights.bold,
+  } as TextStyle,
+
+  // Empty hero
+  emptyHero: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.xl,
+    alignItems: "center",
+    gap: spacing.sm,
+    ...shadows.md,
   } as ViewStyle,
-  healthPct: {
+  emptyIconOuter: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.primaryContainer,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.xs,
+  } as ViewStyle,
+  emptyIconInner: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: `${colors.primary}18`,
+    alignItems: "center",
+    justifyContent: "center",
+  } as ViewStyle,
+  emptyTitle: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 22,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurface,
+  } as TextStyle,
+  emptyDesc: {
+    fontFamily: `${typography.fonts.primary}-Medium`,
+    fontSize: 14,
+    fontWeight: typography.weights.medium,
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+    lineHeight: 21,
+    maxWidth: 280,
+  } as TextStyle,
+  ctaRow: {
+    marginTop: spacing.sm,
+    width: "100%",
+  } as ViewStyle,
+  ctaPrimary: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
+    paddingVertical: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    ...shadows.md,
+  } as ViewStyle,
+  ctaPrimaryText: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 15,
+    fontWeight: typography.weights.bold,
+    color: "#FFFFFF",
+  } as TextStyle,
+
+  // Section label
+  sectionLabel: {
     fontFamily: `${typography.fonts.secondary}-Bold`,
     fontSize: 11,
     fontWeight: typography.weights.bold,
+    color: colors.onSurfaceVariant,
+    textTransform: "uppercase",
+    letterSpacing: 2,
+  } as TextStyle,
+
+  // Tips
+  tipsSection: {
+    gap: spacing.sm,
+  } as ViewStyle,
+  tipCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: spacing.sm,
+    ...shadows.sm,
+  } as ViewStyle,
+  tipIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.primaryContainer,
+    alignItems: "center",
+    justifyContent: "center",
+  } as ViewStyle,
+  tipEmoji: {
+    fontSize: 20,
+  } as TextStyle,
+  tipContent: {
+    flex: 1,
+    gap: 2,
+  } as ViewStyle,
+  tipTitle: {
+    fontFamily: `${typography.fonts.primary}-Bold`,
+    fontSize: 14,
+    fontWeight: typography.weights.bold,
+    color: colors.onSurface,
+  } as TextStyle,
+  tipText: {
+    fontFamily: `${typography.fonts.primary}-Regular`,
+    fontSize: 13,
+    fontWeight: typography.weights.regular,
+    color: colors.onSurfaceVariant,
+    lineHeight: 19,
   } as TextStyle,
 });

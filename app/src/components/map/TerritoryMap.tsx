@@ -360,8 +360,8 @@ export function TerritoryMap({ zones, seedDrops, plantMarkers = [] }: TerritoryM
         ))}
       </MapView>
 
-      {/* Floating side quests card */}
-      <View style={styles.floatingCard}>
+      {/* Floating side quests card — hidden until feature is ready */}
+      {/* <View style={styles.floatingCard}>
         <Text style={styles.cardSectionTitle}>TODAY&apos;S QUESTS</Text>
         <View style={styles.questList}>
           {activeQuests.map((quest) => {
@@ -428,7 +428,7 @@ export function TerritoryMap({ zones, seedDrops, plantMarkers = [] }: TerritoryM
             />
           </View>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 }

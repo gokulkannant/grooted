@@ -119,8 +119,8 @@ export default function ProfileScreen() {
         ))}
       </View>
 
-      {/* Harvest CTA */}
-      <Pressable
+      {/* Harvest CTA — hidden until feature is ready */}
+      {/* <Pressable
         style={({ pressed }) => [
           styles.harvestButton,
           pressed && { opacity: 0.9 },
@@ -128,10 +128,10 @@ export default function ProfileScreen() {
       >
         <GrainIcon color="#FFFFFF" size={22} />
         <Text style={styles.harvestText}>LOG HARVEST TO GAIN POINTS</Text>
-      </Pressable>
+      </Pressable> */}
 
-      {/* Quick links */}
-      <View style={styles.linksRow}>
+      {/* Quick links — hidden until feature is ready */}
+      {/* <View style={styles.linksRow}>
         <Link href="/settings" asChild>
           <Pressable style={styles.linkItem}>
             <SettingsIcon size={24} />
@@ -148,7 +148,7 @@ export default function ProfileScreen() {
           <MedalIcon size={24} />
           <Text style={styles.linkText}>Badges</Text>
         </Pressable>
-      </View>
+      </View> */}
     </ScrollView>
   );
 }

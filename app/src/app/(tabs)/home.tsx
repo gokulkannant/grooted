@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
-import { type ReactNode, useEffect } from "react";
+import React, { type ReactNode, useEffect, useMemo } from "react";
 import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -42,6 +43,68 @@ export default function HomeScreen() {
   useEffect(() => {
     refreshDailyQuests();
   }, [refreshDailyQuests]);
+
+  // Build verifiable tasks from real data
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayLogs = logs.filter((l) => l.loggedAt.startsWith(todayKey));
+  const todayScans = gardenPlants.filter((p) => p.plantedAt.startsWith(todayKey));
+
+  const verifiableTasks = useMemo(() => {
+    const hasLoggedToday = todayLogs.length > 0;
+    const hasScannedToday = todayScans.length > 0;
+    const hasPlants = gardenPlants.length > 0;
+    const needsCare = gardenPlants.some((p) => p.health !== "healthy" && p.health !== "unknown");
+    const completedQuests = completedQuestIds.length;
+
+    const tasks: { title: string; subtitle: string; done: boolean; href: string }[] = [];
+
+    // 1. Daily care log — verified by streak store
+    tasks.push({
+      title: "Log Daily Care",
+      subtitle: hasLoggedToday ? `Logged ${todayLogs.length} time${todayLogs.length > 1 ? "s" : ""} today` : "Record your plant care activity",
+      done: hasLoggedToday,
+      href: "/streak/log",
+    });
+
+    // 2. Scan a plant — verified by scan API result
+    tasks.push({
+      title: "Scan a Plant",
+      subtitle: hasScannedToday ? `${todayScans.length} scan${todayScans.length > 1 ? "s" : ""} today` : "AI health check on any plant",
+      done: hasScannedToday,
+      href: "/scan",
+    });
+
+    // 3. Complete a quest — verified by quest store
+    tasks.push({
+      title: "Complete a Quest",
+      subtitle: completedQuests > 0 ? `${completedQuests}/${activeQuests.length} done` : "Finish any daily quest above",
+      done: completedQuests > 0,
+      href: "",
+    });
+
+    // 4. Conditional: if plants need care, show health check task
+    if (needsCare) {
+      const sickPlant = gardenPlants.find((p) => p.health !== "healthy" && p.health !== "unknown");
+      tasks.push({
+        title: "Health Check",
+        subtitle: `${sickPlant?.name ?? "A plant"} needs attention — scan to update`,
+        done: false,
+        href: "/scan",
+      });
+    }
+
+    // 5. If no plants yet, prompt to add one
+    if (!hasPlants) {
+      tasks.push({
+        title: "Add Your First Plant",
+        subtitle: "Scan or add manually to get started",
+        done: false,
+        href: "/plant/add",
+      });
+    }
+
+    return tasks;
+  }, [todayLogs, todayScans, gardenPlants, completedQuestIds, activeQuests]);
 
   return (
     <ScrollView
@@ -90,13 +153,19 @@ export default function HomeScreen() {
               </Text>
             </View>
             <View style={styles.plantImageBox}>
-              <LeafIcon size={92} />
+              {recentPlant.imageUrl ? (
+                <Image source={{ uri: recentPlant.imageUrl }} style={styles.plantImage} resizeMode="cover" />
+              ) : (
+                <LeafIcon size={92} />
+              )}
             </View>
             <Text style={styles.plantName}>{recentPlant.name}</Text>
             <Text style={styles.plantSpecies}>{recentPlant.species.commonName}</Text>
           </Pressable>
         </Link>
-      ) : (
+      ) : null
+      /* No plants yet card — hidden until feature is ready */
+      /* (
         <View style={styles.plantCard}>
           <View style={styles.plantImageBox}>
             <SproutIcon size={48} color={colors.onSurfaceVariant} />
@@ -109,16 +178,16 @@ export default function HomeScreen() {
             </Pressable>
           </Link>
         </View>
-      )}
+      ) */}
 
-      {/* Weekly Progress */}
-      <View style={styles.section}>
+      {/* Weekly Progress — hidden until feature is ready */}
+      {/* <View style={styles.section}>
         <Text style={styles.sectionTitle}>This Week</Text>
         <StreakCalendar activeDays={Math.min(7, stats.current)} />
-      </View>
+      </View> */}
 
-      {/* Quick Actions */}
-      <View style={styles.actionsRow}>
+      {/* Quick Actions — hidden until feature is ready */}
+      {/* <View style={styles.actionsRow}>
         <Link href="/streak/log" asChild>
           <Button
             icon={<SproutIcon color={colors.onPrimary} size={20} />}
@@ -132,10 +201,10 @@ export default function HomeScreen() {
             Quick Scan
           </Button>
         </Link>
-      </View>
+      </View> */}
 
-      {/* Daily Quests */}
-      <View style={styles.section}>
+      {/* Daily Quests — hidden until feature is ready */}
+      {/* <View style={styles.section}>
         <QuestBoard
           quests={activeQuests}
           completedQuestIds={completedQuestIds}
@@ -143,32 +212,29 @@ export default function HomeScreen() {
           plotClass={profile.plotClass}
           onComplete={completeQuest}
         />
-      </View>
+      </View> */}
 
-      {/* Today's Tasks */}
-      <Text style={styles.sectionTitle}>Today's Tasks</Text>
+      {/* Today's Tasks — hidden until feature is ready */}
+      {/* <Text style={styles.sectionTitle}>Today's Tasks</Text>
       <View style={styles.taskList}>
-        <TaskItem
-          title="Water Succulents"
-          subtitle="Living Room • 50ml"
-          done={false}
-        />
-        <View style={styles.taskDivider} />
-        <TaskItem
-          title="Mist Ferns"
-          subtitle="Bathroom • Light mist"
-          done={false}
-        />
-        <View style={styles.taskDivider} />
-        <TaskItem
-          title="Rotate Ficus"
-          subtitle="Bedroom • 1/4 turn"
-          done={false}
-        />
-      </View>
+        {verifiableTasks.map((task, index) => (
+          <React.Fragment key={task.title}>
+            {index > 0 && <View style={styles.taskDivider} />}
+            {task.href ? (
+              <Link href={task.href as any} asChild>
+                <Pressable style={({ pressed }) => [pressed && { opacity: 0.7 }]}>
+                  <TaskItem title={task.title} subtitle={task.subtitle} done={task.done} />
+                </Pressable>
+              </Link>
+            ) : (
+              <TaskItem title={task.title} subtitle={task.subtitle} done={task.done} />
+            )}
+          </React.Fragment>
+        ))}
+      </View> */}
 
-      {/* Recent Activity */}
-      <View style={styles.section}>
+      {/* Recent Activity — hidden until feature is ready */}
+      {/* <View style={styles.section}>
         <Text style={styles.sectionTitle}>Recent Activity</Text>
         {logs.length === 0 ? (
           <View style={styles.emptyCard}>
@@ -183,7 +249,7 @@ export default function HomeScreen() {
         ) : (
           logs.map((log) => <DailyLogCard key={log.id} log={log} />)
         )}
-      </View>
+      </View> */}
     </ScrollView>
   );
 }
@@ -365,6 +431,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: spacing.md,
     overflow: "hidden",
+  } as ViewStyle,
+  plantImage: {
+    width: "100%",
+    height: "100%",
   } as ViewStyle,
   plantName: {
     fontFamily: `${typography.fonts.primary}-Bold`,

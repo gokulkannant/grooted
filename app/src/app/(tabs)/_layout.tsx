@@ -42,7 +42,8 @@ export default function TabsLayout() {
         tabBarStyle: { display: "none" as const },
       })}
     >
-      <Tabs.Screen name="home" options={{ title: "Home" }} />
+      {/* Home tab — hidden until feature is ready */}
+      <Tabs.Screen name="home" options={{ title: "Home", href: null }} />
       <Tabs.Screen name="map" options={{ title: "Map" }} />
       <Tabs.Screen name="scan" options={{ title: "Scan" }} />
       <Tabs.Screen name="garden" options={{ title: "Garden" }} />
